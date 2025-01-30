@@ -1,0 +1,11 @@
+package com.my.pivoteer.api.user.model.dto
+
+import com.my.pivoteer.api.user.enum.SubscriptionStatus
+import java.util.*
+
+data class UserDto(
+    val id: UUID? = null,
+    val email: String,
+    val subscriptionId: String? = null,
+    val subscriptionStatus: SubscriptionStatus? = null
+)
