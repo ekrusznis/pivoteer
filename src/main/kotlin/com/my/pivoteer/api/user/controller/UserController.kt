@@ -16,4 +16,9 @@ class UserController(private val userService: UserService) {
         val user = userService.findUserById(id) ?: return ApiResponse(false, "User not found")
         return ApiResponse(true, "User fetched", UserMapper.toDTO(user))
     }
+
+    @DeleteMapping("/{id}")
+    fun deleteUser(@PathVariable id: UUID): ApiResponse<String> {
+        return ApiResponse(true, "User deleted", userService.deleteUser(id))
+    }
 }

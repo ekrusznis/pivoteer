@@ -20,6 +20,11 @@ class UserService(private val userRepository: UserRepository) {
         return userRepository.findByEmail(email)
     }
 
+    fun deleteUser(id: UUID): String? {
+        userRepository.deleteById(id)
+        return "User deleted successfully"
+    }
+
     fun updateUser(user: User): User {
         return userRepository.save(user)
     }
