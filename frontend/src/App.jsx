@@ -5,8 +5,9 @@ import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import FileUpload from "./components/FileUpload/FileUpload";
 import AuthPage from "./components/Auth/AuthPage";
+import Profile from "./components/Profile/Profile";
 
-import "./App.css"; // Import global styles
+import "./App.css";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

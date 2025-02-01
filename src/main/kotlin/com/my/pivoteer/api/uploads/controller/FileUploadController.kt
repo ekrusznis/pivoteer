@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 import javax.servlet.http.HttpServletResponse
+import javax.transaction.Transactional
 
 @RestController
 @RequestMapping("/api/files")
@@ -38,18 +39,19 @@ class FileUploadController(
         return ApiResponse(true, "Fetched user files", files)
     }
 
-    @GetMapping("/download/{fileId}")
+    @GetMapping("/download/{fileId}", produces = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"])
     fun downloadFile(@PathVariable fileId: UUID, response: HttpServletResponse) {
         val file = fileUploadService.getFileById(fileId)
             ?: throw Exception("File not found")
 
-        response.contentType = file.fileType
+        response.contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         response.setHeader("Content-Disposition", "attachment; filename=\"${file.filename}\"")
         response.outputStream.write(file.fileData) // ✅ Streams the file
 
         response.outputStream.flush()
     }
 
+    @Transactional
     @DeleteMapping("/delete/{fileId}")
     fun deleteFile(@PathVariable fileId: UUID): ApiResponse<String> {
         fileUploadService.deleteFile(fileId)

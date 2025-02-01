@@ -99,14 +99,29 @@ export const downloadFile = async (fileId) => {
       withCredentials: true,
     });
 
-    // Create a link and download the file
+    // Create a Blob URL for the file
     const url = window.URL.createObjectURL(new Blob([response.data]));
+
+    // Extract filename from Content-Disposition or provide a default
+    let filename = "downloaded_file";
+    const contentDisposition = response.headers["content-disposition"];
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?(.+?)"?(;|$)/);
+      if (match) {
+        filename = match[1];
+      }
+    }
+
+    // Create an anchor element and trigger download
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", response.headers["content-disposition"].split("filename=")[1]);
+    link.setAttribute("download", filename);
     document.body.appendChild(link);
     link.click();
+
+    // Cleanup
     document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error("File download failed:", error.response?.data || error.message);
     throw error;
@@ -135,9 +150,24 @@ export const getFileAnalysisOptions = async (fileId) => {
       withCredentials: true,
     });
 
-    return response.data.data; // API response should have { pivotTables, visualizations, macros }
+    return response.data.data;
   } catch (error) {
     console.error("Failed to fetch file analysis options:", error.response?.data || error.message);
+    throw error;
+  }
+};
+/**
+ * 🔹 Get user profile data
+ */
+
+export const getUserProfileInfo = async (userId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/users/profile/${userId}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user profile:", error.response?.data || error.message);
     throw error;
   }
 };

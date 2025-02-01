@@ -11,6 +11,7 @@ import {
   FaTrash,
   FaEllipsisV
 } from "react-icons/fa";
+import Logo from "../../assets/piv_icon150.png";
 import { uploadFile, getUserFiles, logoutUser, downloadFile, deleteFile } from "../../api";
 import { useNavigate } from "react-router-dom";
 import AnalysisModal from "./Modals/AnalysisModal";
@@ -57,7 +58,7 @@ const Dashboard = () => {
     if (!window.confirm("Are you sure you want to delete this file?")) return;
     try {
       await deleteFile(fileId);
-      setUploadedFiles(uploadedFiles.filter(file => file.id !== fileId));
+    setUploadedFiles(prevFiles => prevFiles.filter(file => file.id !== fileId)); // ✅ Remove from UI without refresh
     } catch (error) {
       console.error("Error deleting file:", error);
     }
@@ -107,10 +108,17 @@ const Dashboard = () => {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h1 style={styles.logo}>Pivoteer</h1>
+        <h1 style={styles.logo}>
+          <img src={Logo} alt="Pivoteer Logo" style={styles.logoImage} />
+          Pivoteer
+        </h1>
         <nav style={styles.nav}>
-          <button style={styles.navButton}><FaUser /> Profile</button>
-          <button style={styles.navButton} onClick={handleLogout}><FaSignOutAlt /> Logout</button>
+          <button style={styles.navButton} onClick={() => navigate("/profile")}>
+            <FaUser /> Profile
+          </button>
+          <button style={styles.navButton} onClick={handleLogout}>
+            <FaSignOutAlt /> Logout
+          </button>
         </nav>
       </header>
 
@@ -285,7 +293,13 @@ const styles = {
       border: "none",
       textAlign: "left",
     },
-  logo: { fontSize: "1.8rem", fontWeight: "bold" },
+      logo: {
+        fontSize: "1.8rem",
+        fontWeight: "bold",
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+      },
   nav: { display: "flex", gap: "20px" },
   navButton: {
     background: "transparent",
@@ -305,6 +319,10 @@ const styles = {
     borderCollapse: "collapse",
     marginTop: "10px",
   },
+    logoImage: {
+      height: "40px", // Adjust as needed
+      width: "auto",
+    },
   actionButtons: { position: "relative" },
   downloadButton: {
     background: "#6B46C1",

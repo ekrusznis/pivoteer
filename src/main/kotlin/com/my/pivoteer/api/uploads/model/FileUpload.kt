@@ -1,7 +1,6 @@
 package com.my.pivoteer.api.uploads.model
 
 import com.my.pivoteer.api.user.model.User
-import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -36,7 +35,7 @@ data class FileUpload(
     val fileData: ByteArray, // Store file as binary (Optional: Use external storage)
 
     @Column(name = "uploaded_at", columnDefinition = "TIMESTAMP")
-    val uploadedAt: LocalDateTime = LocalDateTime.now()
+    val uploadedAt: Date = Date()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,6 +1,5 @@
 package com.my.pivoteer.api.uploads.model.dto
 
-import java.time.LocalDateTime
 import java.util.*
 
 data class FileUploadDto(
@@ -9,5 +8,5 @@ data class FileUploadDto(
     val filename: String,
     val fileType: String,
     val fileSize: Long,
-    val uploadedAt: LocalDateTime
+    val uploadedAt: Date
     )

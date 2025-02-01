@@ -28,6 +28,9 @@ data class User(
     @Column(nullable = true)
     val subscriptionStatus: SubscriptionStatus? = null, // Active, Canceled, Trial, etc.
 
+    @Column(nullable = true)
+    val subscriptionExpiry: Date? = null,
+
     @Column(nullable = false)
     val createdAt: Date = Date(),
 

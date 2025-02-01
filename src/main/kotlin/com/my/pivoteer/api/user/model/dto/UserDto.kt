@@ -7,5 +7,8 @@ data class UserDto(
     val id: UUID? = null,
     val email: String,
     val subscriptionId: String? = null,
+    val createdDate: Date? = null,
+    val updatedDate: Date? = null,
+    val subscriptionExpiry: Date? = null,
     val subscriptionStatus: SubscriptionStatus? = null
 )

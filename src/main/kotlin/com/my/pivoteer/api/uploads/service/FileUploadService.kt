@@ -9,7 +9,6 @@ import com.my.pivoteer.api.user.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -43,15 +42,19 @@ class FileUploadService(
     }
     fun getFilesByUserId(userId: UUID): List<FileUploadDto> {
         val results = fileUploadRepository.findFileMetadataByUserId(userId)
-        return results.map {
-            FileUploadDto(
-                id = it[0] as UUID,
-                userId = it[1] as UUID,
-                filename = it[2] as String,
-                fileType = it[3] as String,
-                fileSize = it[4] as Long,
-                uploadedAt = it[5] as LocalDateTime
-            )
+        return if (results.isEmpty()){
+            emptyList()
+        }else{
+            results.map {
+                FileUploadDto(
+                    id = it[0] as UUID,
+                    userId = it[1] as UUID,
+                    filename = it[2] as String,
+                    fileType = it[3] as String,
+                    fileSize = it[4] as Long,
+                    uploadedAt = it[5] as Date
+                )
+            }
         }
     }
     fun deleteFile(fileId: UUID) {
