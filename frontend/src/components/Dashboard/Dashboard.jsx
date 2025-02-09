@@ -26,25 +26,26 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
   const [analyzingFileId, setAnalyzingFileId] = useState(null);
+  const [activeTab, setActiveTab] = useState("Uploaded Files");
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        if (!userId) {
-          console.warn("No userId found. Redirecting...");
-          navigate("/auth?mode=login");
-          return;
-        }
-        const files = await getUserFiles(userId);
-        setUploadedFiles(files);
-      } catch (error) {
-        console.error("Error fetching files:", error);
-      }
-    };
-
     fetchFiles();
   }, [userId, navigate]);
+
+  const fetchFiles = async () => {
+    try {
+      if (!userId) {
+        console.warn("No userId found. Redirecting...");
+        navigate("/auth?mode=login");
+        return;
+      }
+      const files = await getUserFiles(userId);
+      setUploadedFiles(files);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
+  };
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -58,14 +59,14 @@ const Dashboard = () => {
   };
 
   const handleDelete = async (fileId) => {
-      if (!window.confirm("Are you sure you want to delete this file?")) return;
-      try {
-        await deleteFile(fileId);
-        await fetchFiles(); // ✅ Fetch updated list after deletion
-      } catch (error) {
-        console.error("Error deleting file:", error);
-      }
-    };
+    if (!window.confirm("Are you sure you want to delete this file?")) return;
+    try {
+      await deleteFile(fileId);
+      fetchFiles(); // ✅ Ensure UI updates immediately
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  };
 
   const handleAnalyze = async () => {
     if (!selectedFile) {
@@ -74,34 +75,26 @@ const Dashboard = () => {
     }
 
     setLoading(true);
-
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
-
-      console.log("Sending file for analysis...");
-
       const response = await uploadFile(formData);
-      console.log("File uploaded successfully:", response);
 
       if (response.data && response.data.id) {
-        setUploadedFiles((prevFiles) => [...prevFiles, response.data]); // ✅ Keep previous files
+        setUploadedFiles((prevFiles) => [...prevFiles, response.data]);
         setAnalyzingFileId(response.data.id);
         setShowAnalysisModal(true);
       } else {
         console.error("Invalid response data:", response);
         alert("Something went wrong! Could not analyze file.");
       }
-
-      setSelectedFile(null); // ✅ Reset input
+      setSelectedFile(null);
     } catch (error) {
       console.error("Error analyzing file:", error);
       alert("Failed to analyze file. Please try again.");
     }
-
     setLoading(false);
   };
-
 
   const handleLogout = async () => {
     await logoutUser();
@@ -137,32 +130,38 @@ const Dashboard = () => {
               {loading ? "Analyzing..." : "Analyze"}
             </button>
           </div>
-          {/* ✅ Show selected file name under the upload field */}
-          {selectedFile && (
-            <p style={styles.selectedFileText}>
-              <FaFileAlt /> {selectedFile.name} ({selectedFile.size} bytes)
-            </p>
-          )}
+          {selectedFile && <p style={styles.selectedFileText}><FaFileAlt /> {selectedFile.name} ({selectedFile.size} bytes)</p>}
         </div>
       </section>
 
       <section style={styles.contentSection}>
-        <h2 style={styles.sectionTitle}>Your Data</h2>
-        <div style={styles.content}>
-          <DataTable title="Uploaded Files" items={uploadedFiles} handleDelete={handleDelete} />
-          <DataTable title="Pivot Tables" items={pivotTables} />
-          <DataTable title="Visualizations" items={visualizations} />
-          <DataTable title="Macros" items={macros} />
+        <div style={styles.tabs}>
+          {["Uploaded Files", "Pivot Tables", "Visualizations", "Macros"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{ ...styles.tab, ...(activeTab === tab ? styles.activeTab : {}) }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
 
+        <div style={styles.tabContent}>
+          {activeTab === "Uploaded Files" && <DataTable title="Uploaded Files" items={uploadedFiles} handleDelete={handleDelete} />}
+          {activeTab === "Pivot Tables" && <DataTable title="Pivot Tables" items={pivotTables} />}
+          {activeTab === "Visualizations" && <DataTable title="Visualizations" items={visualizations} />}
+          {activeTab === "Macros" && <DataTable title="Macros" items={macros} />}
         </div>
       </section>
 
-          {showAnalysisModal && <AnalysisModal fileId={analyzingFileId} onClose={() => setShowAnalysisModal(false)} />}
+      {showAnalysisModal && <AnalysisModal fileId={analyzingFileId} onClose={() => setShowAnalysisModal(false)} />}
     </div>
   );
 };
+
 const DataTable = ({ title, items, handleDelete }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(null); // Track open dropdown for each item
+  const [dropdownOpen, setDropdownOpen] = useState(null); // Track open dropdown for each row
 
   const toggleDropdown = (itemId) => {
     setDropdownOpen(dropdownOpen === itemId ? null : itemId);
@@ -225,17 +224,6 @@ const DataTable = ({ title, items, handleDelete }) => {
     </div>
   );
 };
-
-const CategoryBox = ({ icon, title, items }) => (
-  <div style={styles.card}>
-    <h3 style={styles.cardTitle}>{icon} {title}</h3>
-    <ul style={styles.list}>
-      {items.length > 0 ? items.map((item, index) => (
-        <li key={index} style={styles.listItem}>{item.filename}</li>
-      )) : <p style={styles.emptyText}>No {title.toLowerCase()} available.</p>}
-    </ul>
-  </div>
-);
 
 /* ✅ Inline Styles */
 const styles = {
@@ -432,7 +420,11 @@ const styles = {
     table: { width: "100%", borderCollapse: "collapse", marginTop: "10px" },
     deleteButton: { background: "#E53E3E", color: "white", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" },
     downloadButton: { background: "#6B46C1", color: "white", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" },
-    emptyText: { color: "#CFCFCF", fontSize: "0.9rem" }
+    emptyText: { color: "#CFCFCF", fontSize: "0.9rem" },
+      tabs: { display: "flex", justifyContent: "center", gap: "10px", marginBottom: "20px" },
+      tab: { background: "none", border: "2px solid white", padding: "10px 20px", cursor: "pointer", color: "white", fontSize: "1rem", transition: "0.3s" },
+      activeTab: { background: "#6B46C1", color: "white", borderColor: "#6B46C1" },
+      tabContent: { textAlign: "center" }
 
 };
 
