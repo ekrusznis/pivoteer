@@ -1,11 +1,14 @@
 package com.my.pivoteer.api.uploads.service
 
+import com.my.pivoteer.api.uploads.model.FileUpload
 import com.my.pivoteer.api.uploads.model.dto.*
 import com.my.pivoteer.api.uploads.repository.FileUploadRepository
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.springframework.stereotype.Service
+import java.io.BufferedReader
 import java.io.ByteArrayInputStream
+import java.io.InputStreamReader
 import java.util.*
 import kotlin.math.sqrt
 
@@ -17,7 +20,15 @@ class FileAnalysisService(
         val file = fileUploadRepository.findById(fileId)
             .orElseThrow { Exception("File not found") }
 
+        println("DEBUG: Processing file - ID: ${file.id}, Name: ${file.filename}, Type: ${file.fileType}, Size: ${file.fileData.size} bytes")
+
         return try {
+            // Detect if it's a CSV
+            if (file.fileType == "text/csv" || file.filename.endsWith(".csv")) {
+                println("DEBUG: CSV file detected, processing as CSV")
+                return processCsv(file)
+            }
+            // Process as Excel
             val inputStream = ByteArrayInputStream(file.fileData)
             val workbook = WorkbookFactory.create(inputStream)
             val sheet = workbook.getSheetAt(0) ?: throw Exception("Empty sheet")
@@ -49,6 +60,22 @@ class FileAnalysisService(
         } catch (e: Exception) {
             throw Exception("Error processing file: ${e.message}", e)
         }
+    }
+    private fun processCsv(file: FileUpload): FileAnalysisOptionsDto {
+        val inputStream = ByteArrayInputStream(file.fileData)
+        val reader = BufferedReader(InputStreamReader(inputStream))
+
+        val rows = reader.readLines()
+        if (rows.isEmpty()) throw Exception("CSV file is empty")
+
+        val columnHeaders = rows.first().split(",").map { it.trim() }
+
+        return FileAnalysisOptionsDto(
+            fileId = file.id,
+            pivotTables = suggestPivotTables(columnHeaders, emptyMap()),
+            visualizations = emptyList(),
+            macros = emptyList()
+        )
     }
 
     // ✅ Detects the **data type** of a column
@@ -82,25 +109,26 @@ class FileAnalysisService(
             if (categoricalColumns.isNotEmpty() && numericColumns.isNotEmpty()) add(
                 PivotTableOption(
                     title = "Summary of ${numericColumns[0]} by ${categoricalColumns[0]}",
-                    description = "Groups ${numericColumns[0]} based on ${categoricalColumns[0]}."
+                    description = "Groups ${numericColumns[0]} based on ${categoricalColumns[0]}.",
+                    rowFields = listOf(categoricalColumns[0]),
+                    columnFields = listOf(),
+                    valueFields = listOf(numericColumns[0]),
+                    aggregationType = "SUM"
                 )
             )
             if (numericColumns.isNotEmpty()) add(
                 PivotTableOption(
                     title = "Top 10 ${categoricalColumns.firstOrNull() ?: "Items"}",
-                    description = "Ranks the highest values in ${numericColumns[0]}."
-                )
-            )
-            if (categoricalColumns.size > 1) add(
-                PivotTableOption(
-                    title = "Breakdown of ${numericColumns.firstOrNull() ?: "data"} by ${categoricalColumns[0]} and ${categoricalColumns[1]}",
-                    description = "Shows how data is distributed across ${categoricalColumns[0]} and ${categoricalColumns[1]}."
+                    description = "Ranks the highest values in ${numericColumns[0]}.",
+                    rowFields = listOf(categoricalColumns.firstOrNull() ?: ""),
+                    columnFields = listOf(),
+                    valueFields = listOf(numericColumns[0]),
+                    aggregationType = "SUM"
                 )
             )
         }
     }
 
-    // ✅ Suggest **Visualizations** dynamically
     private fun suggestVisualizations(columns: List<String>, dataTypes: Map<String, String>): List<VisualizationOption> {
         val categoricalColumns = columns.filter { dataTypes[it] == "Text" }
         val numericColumns = columns.filter { dataTypes[it] == "Numeric" }
@@ -108,16 +136,24 @@ class FileAnalysisService(
         return buildList {
             if (categoricalColumns.isNotEmpty() && numericColumns.isNotEmpty()) add(
                 VisualizationOption(
+                    id = UUID.randomUUID(),
                     title = "Bar Chart - ${numericColumns[0]} by ${categoricalColumns[0]}",
                     description = "Displays ${numericColumns[0]} grouped by ${categoricalColumns[0]}.",
-                    previewUrl = "https://example.com/bar_chart.png"
+                    previewUrl = "https://example.com/bar_chart.png",
+                    chartType = "bar",
+                    xAxis = categoricalColumns[0],
+                    yAxis = numericColumns[0]
                 )
             )
             if (numericColumns.isNotEmpty() && categoricalColumns.any { it.contains("date", ignoreCase = true) }) add(
                 VisualizationOption(
+                    id = UUID.randomUUID(),
                     title = "Line Graph - ${numericColumns[0]} over Time",
                     description = "Shows trends of ${numericColumns[0]} over time.",
-                    previewUrl = "https://example.com/line_graph.png"
+                    previewUrl = "https://example.com/line_graph.png",
+                    chartType = "line",
+                    xAxis = categoricalColumns.find { it.contains("date", ignoreCase = true) } ?: "",
+                    yAxis = numericColumns[0]
                 )
             )
         }
@@ -137,19 +173,8 @@ class FileAnalysisService(
                     title = "Remove Duplicates",
                     description = "Removes duplicate values from ${duplicateColumns.joinToString(", ")}.",
                     affectedColumns = duplicateColumns,
-                    macroType = "Data Cleaning"
-                )
-            )
-        }
-
-        val missingDataColumns = columns.filter { col -> dataRows.any { it[col] == null } }
-        if (missingDataColumns.isNotEmpty()) {
-            macros.add(
-                MacroOption(
-                    title = "Fill Missing Data",
-                    description = "Identifies and fills missing values in ${missingDataColumns.joinToString(", ")}.",
-                    affectedColumns = missingDataColumns,
-                    macroType = "Data Cleaning"
+                    macroType = "Data Cleaning",
+                    previewExample = formatPreviewExample(dataRows.take(5)) // ✅ Convert first 5 rows into a readable preview
                 )
             )
         }
@@ -167,7 +192,10 @@ class FileAnalysisService(
                             title = "Identify Outliers",
                             description = "Detects outliers in ${col}.",
                             affectedColumns = listOf(col),
-                            macroType = "Data Analysis"
+                            macroType = "Data Analysis",
+                            previewExample = formatPreviewExample(
+                                dataRows.filter { it[col]?.toString()?.toDoubleOrNull() in outliers }.take(5)
+                            ) // ✅ Convert first 5 outlier rows into a readable preview
                         )
                     )
                 }
@@ -175,5 +203,10 @@ class FileAnalysisService(
         }
 
         return macros
+    }
+    private fun formatPreviewExample(rows: List<Map<String, Any>>): String {
+        return rows.joinToString("\n") { row ->
+            row.entries.joinToString(", ") { (key, value) -> "$key: $value" }
+        }
     }
 }

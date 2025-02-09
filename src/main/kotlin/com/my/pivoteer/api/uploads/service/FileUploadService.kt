@@ -30,7 +30,7 @@ class FileUploadService(
             filename = file.originalFilename ?: "unknown",
             fileType = fileExtension,
             fileSize = file.size,
-            fileData = file.bytes // Save file as binary data
+            fileData = file.bytes
         )
 
         val savedFile = fileUploadRepository.save(fileUpload)

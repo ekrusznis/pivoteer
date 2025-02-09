@@ -19,6 +19,9 @@ import AnalysisModal from "./Modals/AnalysisModal";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [pivotTables, setPivotTables] = useState([]);
+  const [visualizations, setVisualizations] = useState([]);
+  const [macros, setMacros] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
@@ -55,14 +58,14 @@ const Dashboard = () => {
   };
 
   const handleDelete = async (fileId) => {
-    if (!window.confirm("Are you sure you want to delete this file?")) return;
-    try {
-      await deleteFile(fileId);
-    setUploadedFiles(prevFiles => prevFiles.filter(file => file.id !== fileId)); // ✅ Remove from UI without refresh
-    } catch (error) {
-      console.error("Error deleting file:", error);
-    }
-  };
+      if (!window.confirm("Are you sure you want to delete this file?")) return;
+      try {
+        await deleteFile(fileId);
+        await fetchFiles(); // ✅ Fetch updated list after deletion
+      } catch (error) {
+        console.error("Error deleting file:", error);
+      }
+    };
 
   const handleAnalyze = async () => {
     if (!selectedFile) {
@@ -146,10 +149,11 @@ const Dashboard = () => {
       <section style={styles.contentSection}>
         <h2 style={styles.sectionTitle}>Your Data</h2>
         <div style={styles.content}>
-          <FileHistoryBox icon={<FaFileAlt size={30} />} title="Uploaded Files" items={uploadedFiles} />
-          <CategoryBox icon={<FaTable size={30} />} title="Pivot Tables" items={[]} />
-          <CategoryBox icon={<FaChartBar size={30} />} title="Visualizations" items={[]} />
-          <CategoryBox icon={<FaCogs size={30} />} title="Macros" items={[]} />
+          <DataTable title="Uploaded Files" items={uploadedFiles} handleDelete={handleDelete} />
+          <DataTable title="Pivot Tables" items={pivotTables} />
+          <DataTable title="Visualizations" items={visualizations} />
+          <DataTable title="Macros" items={macros} />
+
         </div>
       </section>
 
@@ -157,67 +161,66 @@ const Dashboard = () => {
     </div>
   );
 };
-/* ✅ File History Box with Dropdown Actions */
-const FileHistoryBox = ({ icon, title, items }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(null); // Track open dropdown for each file
+const DataTable = ({ title, items, handleDelete }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(null); // Track open dropdown for each item
 
-  const toggleDropdown = (fileId) => {
-    setDropdownOpen(dropdownOpen === fileId ? null : fileId);
+  const toggleDropdown = (itemId) => {
+    setDropdownOpen(dropdownOpen === itemId ? null : itemId);
   };
 
   return (
     <div style={styles.card}>
-      <h3 style={styles.cardTitle}>{icon} {title}</h3>
+      <h3 style={styles.cardTitle}>{title}</h3>
       {items.length > 0 ? (
         <table style={styles.table}>
           <thead>
             <tr>
-              <th>Filename</th>
-              <th>Uploaded</th>
-              <th>Size</th>
-              <th>Type</th>
-              <th>Actions</th>
+              {Object.keys(items[0] || {}).map((key) => (
+                <th key={key}>{key.replace(/([A-Z])/g, " $1").trim()}</th>
+              ))}
+              {handleDelete && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
-            {items.map((file) => (
-              <tr key={file.id}>
-                <td>{file.filename}</td>
-                <td>{new Date(file.uploadedAt).toLocaleDateString()}</td>
-                <td>{(file.fileSize / 1024 / 1024).toFixed(2)} MB</td>
-                <td>{file.fileType}</td>
-                <td style={styles.actionButtons}>
-                  <div style={styles.dropdownContainer}>
-                    <button
-                      style={styles.dropdownButton}
-                      onClick={() => toggleDropdown(file.id)}
-                    >
-                      <FaEllipsisV />
-                    </button>
-                    {dropdownOpen === file.id && (
-                      <div style={styles.dropdownMenu}>
-                        <button
-                          style={styles.dropdownItem}
-                          onClick={() => downloadFile(file.id)}
-                        >
-                          📥 Download
-                        </button>
-                        <button
-                          style={styles.dropdownItemDelete}
-                          onClick={() => deleteFile(file.id)}
-                        >
-                          🗑 Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </td>
+            {items.map((item) => (
+              <tr key={item.id}>
+                {Object.values(item).map((val, idx) => (
+                  <td key={idx}>{val}</td>
+                ))}
+                {handleDelete && (
+                  <td style={styles.actionButtons}>
+                    <div style={styles.dropdownContainer}>
+                      <button
+                        style={styles.dropdownButton}
+                        onClick={() => toggleDropdown(item.id)}
+                      >
+                        <FaEllipsisV />
+                      </button>
+                      {dropdownOpen === item.id && (
+                        <div style={styles.dropdownMenu}>
+                          <button
+                            style={styles.dropdownItem}
+                            onClick={() => downloadFile(item.id)}
+                          >
+                            📥 Download
+                          </button>
+                          <button
+                            style={styles.dropdownItemDelete}
+                            onClick={() => handleDelete(item.id)}
+                          >
+                            🗑 Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p style={styles.emptyText}>No uploaded files available.</p>
+        <p style={styles.emptyText}>No {title.toLowerCase()} available.</p>
       )}
     </div>
   );
@@ -421,6 +424,16 @@ const styles = {
   list: { listStyle: "none", padding: 0 },
   listItem: { padding: "5px 0", borderBottom: "1px solid rgba(255,255,255,0.2)" },
   emptyText: { color: "#CFCFCF", fontSize: "0.9rem" },
+    container: { width: "100vw", minHeight: "100vh", background: "linear-gradient(135deg, #1C1C2D, #2A2245)", color: "white", paddingTop: "80px" },
+    header: { width: "100%", background: "rgba(41, 41, 67, 0.8)", padding: "15px 10px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "fixed", top: 0, left: 0, zIndex: 1000, backdropFilter: "blur(10px)" },
+    logo: { display: "flex", alignItems: "center", gap: "10px" },
+    logoImage: { width: "40px", height: "40px" },
+    nav: { display: "flex", gap: "20px" },
+    table: { width: "100%", borderCollapse: "collapse", marginTop: "10px" },
+    deleteButton: { background: "#E53E3E", color: "white", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" },
+    downloadButton: { background: "#6B46C1", color: "white", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" },
+    emptyText: { color: "#CFCFCF", fontSize: "0.9rem" }
+
 };
 
 export default Dashboard;

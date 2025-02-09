@@ -23,7 +23,7 @@ class FileUploadController(
         @RequestParam("file") file: MultipartFile,
         authentication: Authentication
     ): ApiResponse<FileUploadDto> {
-        val user = userService.findUserById(UUID.fromString(authentication.name)) // ✅ Use UUID
+        val user = userService.findUserById(UUID.fromString(authentication.name))
             ?: throw Exception("No user found for this auth")
 
         val savedFile = fileUploadService.uploadFile(user.id, file)
