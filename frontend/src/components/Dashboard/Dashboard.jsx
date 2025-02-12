@@ -62,7 +62,7 @@ const Dashboard = () => {
     if (!window.confirm("Are you sure you want to delete this file?")) return;
     try {
       await deleteFile(fileId);
-      fetchFiles(); // ✅ Ensure UI updates immediately
+      fetchFiles();
     } catch (error) {
       console.error("Error deleting file:", error);
     }
@@ -166,6 +166,25 @@ const DataTable = ({ title, items, handleDelete }) => {
   const toggleDropdown = (itemId) => {
     setDropdownOpen(dropdownOpen === itemId ? null : itemId);
   };
+  const formatFileSize = (sizeInBytes) => {
+    if (sizeInBytes >= 1e9) {
+      return (sizeInBytes / 1e9).toFixed(2) + " GB";
+    } else {
+      return (sizeInBytes / 1e6).toFixed(2) + " MB";
+    }
+  };
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZoneName: "short"
+    });
+  };
 
   return (
     <div style={styles.card}>
@@ -174,18 +193,24 @@ const DataTable = ({ title, items, handleDelete }) => {
         <table style={styles.table}>
           <thead>
             <tr>
-              {Object.keys(items[0] || {}).map((key) => (
-                <th key={key}>{key.replace(/([A-Z])/g, " $1").trim()}</th>
-              ))}
-              {handleDelete && <th>Actions</th>}
+              <th>ID</th>
+              <th>Uploaded By</th>
+              <th>Filename</th>
+              <th>File Type</th>
+              <th>File Size</th>
+              <th>Uploaded At</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
               <tr key={item.id}>
-                {Object.values(item).map((val, idx) => (
-                  <td key={idx}>{val}</td>
-                ))}
+                <td>{item.id}</td>
+                <td>{item.userId}</td>
+                <td>{item.filename}</td>
+                <td>{item.fileType}</td>
+                <td>{formatFileSize(item.fileSize)}</td> {/* Convert file size */}
+                <td>{formatDate(item.uploadedAt)}</td> {/* Format date */}
                 {handleDelete && (
                   <td style={styles.actionButtons}>
                     <div style={styles.dropdownContainer}>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import { FaUser, FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { registerUser, loginUser } from "../../api";
 
@@ -14,20 +14,19 @@ const AuthPage = () => {
     subscription: "FREE",
   });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  /* 🛠 Read the mode from the URL (login or register) */
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     setIsLogin(params.get("mode") !== "register");
   }, [location]);
 
-  /* ✅ Handle Input Changes */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  /* ✅ Handle Form Submit */
   const handleSubmit = async () => {
     setError("");
     try {
@@ -43,11 +42,7 @@ const AuthPage = () => {
       }
 
       console.log("Auth Successful:", response);
-
-      // ✅ Store JWT token in localStorage
       localStorage.setItem("token", response.token);
-
-      // ✅ Redirect to Dashboard
       navigate("/dashboard");
 
     } catch (err) {
@@ -75,15 +70,37 @@ const AuthPage = () => {
             <input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} style={styles.input} />
           </div>
 
+          {/* Password Field with Eye Icon */}
           <div style={styles.inputField}>
             <FaLock style={styles.icon} />
-            <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} style={styles.input} />
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              style={styles.input}
+            />
+            <span style={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
           </div>
 
+          {/* Confirm Password Field with Eye Icon */}
           {!isLogin && (
             <div style={styles.inputField}>
               <FaLock style={styles.icon} />
-              <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} style={styles.input} />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                style={styles.input}
+              />
+              <span style={styles.eyeIcon} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
           )}
 
@@ -109,12 +126,10 @@ const AuthPage = () => {
           )}
         </div>
 
-        {/* ✅ Submit Button */}
         <button onClick={handleSubmit} style={styles.submitButton}>
           {isLogin ? "Login" : "Register"}
         </button>
 
-        {/* ✅ Switch Between Login & Register */}
         <p style={styles.switchText}>
           {isLogin ? "New user?" : "Already have an account?"}{" "}
           <span style={styles.switchLink} onClick={() => setIsLogin(!isLogin)}>
@@ -122,7 +137,6 @@ const AuthPage = () => {
           </span>
         </p>
 
-        {/* ✅ Added "Back to Home" Link */}
         <Link to="/" style={styles.backLink}>← Back to Home</Link>
       </div>
     </div>
@@ -155,6 +169,7 @@ const styles = {
     padding: "10px",
     borderRadius: "8px",
     marginBottom: "15px",
+    position: "relative",
   },
   input: {
     width: "100%",
@@ -163,6 +178,13 @@ const styles = {
     background: "transparent",
     color: "white",
     fontSize: "1rem",
+    paddingRight: "40px",
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: "10px",
+    cursor: "pointer",
+    color: "#CFCFCF",
   },
   backLink: {
     display: "block",
