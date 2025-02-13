@@ -259,6 +259,7 @@ const styles = {
     color: "white",
     display: "flex",
     flexDirection: "column",
+    overflowX: "hidden",
     paddingTop: "80px",
   },
   header: {
@@ -422,7 +423,7 @@ const styles = {
     display: "grid",
     gridTemplateColumns: "repeat(2, minmax(250px, 1fr))",
     gap: "20px",
-    width: "80%",
+    width: "100%",
     margin: "auto",
   },
   card: {
@@ -437,19 +438,11 @@ const styles = {
   list: { listStyle: "none", padding: 0 },
   listItem: { padding: "5px 0", borderBottom: "1px solid rgba(255,255,255,0.2)" },
   emptyText: { color: "#CFCFCF", fontSize: "0.9rem" },
-    container: { width: "100vw", minHeight: "100vh", background: "linear-gradient(135deg, #1C1C2D, #2A2245)", color: "white", paddingTop: "80px" },
-    header: { width: "100%", background: "rgba(41, 41, 67, 0.8)", padding: "15px 10px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "fixed", top: 0, left: 0, zIndex: 1000, backdropFilter: "blur(10px)" },
-    logo: { display: "flex", alignItems: "center", gap: "10px" },
-    logoImage: { width: "40px", height: "40px" },
-    nav: { display: "flex", gap: "20px" },
-    table: { width: "100%", borderCollapse: "collapse", marginTop: "10px" },
-    deleteButton: { background: "#E53E3E", color: "white", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" },
-    downloadButton: { background: "#6B46C1", color: "white", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" },
-    emptyText: { color: "#CFCFCF", fontSize: "0.9rem" },
-      tabs: { display: "flex", justifyContent: "center", gap: "10px", marginBottom: "20px" },
-      tab: { background: "none", border: "2px solid white", padding: "10px 20px", cursor: "pointer", color: "white", fontSize: "1rem", transition: "0.3s" },
-      activeTab: { background: "#6B46C1", color: "white", borderColor: "#6B46C1" },
-      tabContent: { textAlign: "center" }
+  nav: { display: "flex", gap: "20px" },
+  tabs: { display: "flex", justifyContent: "center", gap: "10px", marginBottom: "20px" },
+  tab: { background: "none", border: "2px solid white", padding: "10px 20px", cursor: "pointer", color: "white", fontSize: "1rem", transition: "0.3s" },
+  activeTab: { background: "#6B46C1", color: "white", borderColor: "#6B46C1" },
+  tabContent: { textAlign: "center" }
 
 };
 
