@@ -149,13 +149,30 @@ export const getFileAnalysisOptions = async (fileId) => {
     const response = await axios.get(`${API_BASE_URL}/files/analysis-options?fileId=${fileId}`, {
       withCredentials: true,
     });
-
     return response.data.data;
   } catch (error) {
     console.error("Failed to fetch file analysis options:", error.response?.data || error.message);
     throw error;
   }
 };
+export const processFileSelections = async (fileId, selectedOptions) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/files/process-selection`, {
+      fileId,
+      pivotTables: selectedOptions.pivotTables || [],
+      visualizations: selectedOptions.visualizations || [],
+      macros: selectedOptions.macros || [],
+    }, {
+      withCredentials: true,
+    });
+
+    return response.data.data; // ✅ Returns processed file download links
+  } catch (error) {
+    console.error("File processing failed:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 /**
  * 🔹 Get user profile data
  */

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { getFileAnalysisOptions } from "../../../api";
-import { FaTimes } from "react-icons/fa";
+import { getFileAnalysisOptions, processFileSelections } from "../../../api";
+import { FaTimes, FaDownload } from "react-icons/fa";
 
 const AnalysisModal = ({ fileId, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [analysisOptions, setAnalysisOptions] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({
-    pivotTables: false,
-    pivotVisualizations: false,
-    macros: false,
+    pivotTables: [],
+    visualizations: [],
+    macros: [],
   });
 
   useEffect(() => {
@@ -26,13 +26,39 @@ const AnalysisModal = ({ fileId, onClose }) => {
     fetchAnalysisOptions();
   }, [fileId]);
 
-  const handleCheckboxChange = (option) => {
-    setSelectedOptions((prev) => ({ ...prev, [option]: !prev[option] }));
+  const handleCheckboxChange = (category, item) => {
+    setSelectedOptions((prev) => {
+      const updatedCategory = prev[category].includes(item)
+        ? prev[category].filter((i) => i !== item)
+        : [...prev[category], item];
+
+      return { ...prev, [category]: updatedCategory };
+    });
   };
 
-  const handleProcessSelection = () => {
-    console.log("Selected Options:", selectedOptions);
-    onClose(); // Close modal after submission
+  const handleProcessSelection = async () => {
+    try {
+      setLoading(true);
+
+      const processedFiles = await processFileSelections(fileId, selectedOptions);
+      console.log("Processed Files:", processedFiles);
+
+      // ✅ Automatically download the generated files
+      processedFiles.forEach(file => {
+        const link = document.createElement("a");
+        link.href = file.downloadUrl;
+        link.download = file.filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      onClose(); // ✅ Close modal after processing
+    } catch (error) {
+      console.error("Error processing file selection:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,86 +67,62 @@ const AnalysisModal = ({ fileId, onClose }) => {
         <button style={styles.closeButton} onClick={onClose}>
           <FaTimes />
         </button>
-        <h2>Analyzing File...</h2>
+        <h2>File Analysis</h2>
         {loading ? (
           <div style={styles.loader}>Loading...</div>
         ) : (
           <>
-            <p>Select what you want to process:</p>
-            <div style={styles.checkboxContainer}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedOptions.pivotTables}
-                  onChange={() => handleCheckboxChange("pivotTables")}
-                />
-                Pivot Tables
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedOptions.pivotVisualizations}
-                  onChange={() => handleCheckboxChange("pivotVisualizations")}
-                />
-                Pivot Visualizations
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selectedOptions.macros}
-                  onChange={() => handleCheckboxChange("macros")}
-                />
-                Macros
-              </label>
-            </div>
+            <p>Select which items to generate:</p>
 
-            {/* ✅ Tabs Section */}
             <div style={styles.tabs}>
               {/* ✅ Pivot Tables */}
-              {selectedOptions.pivotTables && (
-                <div>
-                  <h3>Available Pivot Tables</h3>
-                  <ul>
-                    {analysisOptions.pivotTables.map((table) => (
-                      <li key={table.name}>
-                        <strong>{table.name}</strong> - {table.description}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div>
+                <h3>Pivot Tables</h3>
+                {analysisOptions.pivotTables.map((table) => (
+                  <label key={table.name}>
+                    <input
+                      type="checkbox"
+                      checked={selectedOptions.pivotTables.includes(table.name)}
+                      onChange={() => handleCheckboxChange("pivotTables", table.name)}
+                    />
+                    {table.name} - {table.description}
+                  </label>
+                ))}
+              </div>
 
               {/* ✅ Visualizations */}
-              {selectedOptions.pivotVisualizations && (
-                <div>
-                  <h3>Available Visualizations</h3>
-                  <ul>
-                    {analysisOptions.visualizations.map((viz) => (
-                      <li key={viz.type}>
-                        <strong>{viz.type}</strong> - <img src={viz.exampleImageUrl} alt={viz.type} width="50" />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div>
+                <h3>Visualizations</h3>
+                {analysisOptions.visualizations.map((viz) => (
+                  <label key={viz.type}>
+                    <input
+                      type="checkbox"
+                      checked={selectedOptions.visualizations.includes(viz.type)}
+                      onChange={() => handleCheckboxChange("visualizations", viz.type)}
+                    />
+                    {viz.type} - <img src={viz.previewUrl} alt={viz.type} width="50" />
+                  </label>
+                ))}
+              </div>
 
               {/* ✅ Macros */}
-              {selectedOptions.macros && (
-                <div>
-                  <h3>Available Macros</h3>
-                  <ul>
-                    {analysisOptions.macros.map((macro) => (
-                      <li key={macro.name}>
-                        <strong>{macro.name}</strong> - {macro.actionDescription}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div>
+                <h3>Macros</h3>
+                {analysisOptions.macros.map((macro) => (
+                  <label key={macro.name}>
+                    <input
+                      type="checkbox"
+                      checked={selectedOptions.macros.includes(macro.name)}
+                      onChange={() => handleCheckboxChange("macros", macro.name)}
+                    />
+                    {macro.name} - {macro.actionDescription}
+                  </label>
+                ))}
+              </div>
             </div>
 
             <button style={styles.processButton} onClick={handleProcessSelection}>
-              Process Selection
+              <FaDownload /> Process & Download
             </button>
           </>
         )}
@@ -128,8 +130,6 @@ const AnalysisModal = ({ fileId, onClose }) => {
     </div>
   );
 };
-
-/* ✅ Modal Styles */
 const styles = {
   overlay: {
     position: "fixed",
@@ -150,6 +150,8 @@ const styles = {
     textAlign: "center",
     color: "white",
     boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.3)",
+    position: "relative",
+    width: "400px",
   },
   closeButton: {
     position: "absolute",

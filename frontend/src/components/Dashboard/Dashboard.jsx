@@ -82,6 +82,8 @@ const Dashboard = () => {
 
       if (response.data && response.data.id) {
         setUploadedFiles((prevFiles) => [...prevFiles, response.data]);
+
+        // ✅ Instead of processing, fetch available analysis options and show the modal
         setAnalyzingFileId(response.data.id);
         setShowAnalysisModal(true);
       } else {
@@ -206,11 +208,11 @@ const DataTable = ({ title, items, handleDelete }) => {
             {items.map((item) => (
               <tr key={item.id}>
                 <td>{item.id}</td>
-                <td>{item.userId}</td>
+                <td>{item.uploadedBy}</td>
                 <td>{item.filename}</td>
                 <td>{item.fileType}</td>
-                <td>{formatFileSize(item.fileSize)}</td> {/* Convert file size */}
-                <td>{formatDate(item.uploadedAt)}</td> {/* Format date */}
+                <td>{formatFileSize(item.fileSize)}</td>
+                <td>{formatDate(item.uploadedAt)}</td>
                 {handleDelete && (
                   <td style={styles.actionButtons}>
                     <div style={styles.dropdownContainer}>
