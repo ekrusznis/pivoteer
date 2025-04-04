@@ -128,6 +128,51 @@ export const downloadFile = async (fileId) => {
   }
 };
 
+export const downloadExcel = async (fileId) => {
+
+  const response = await axios.get(`${API_BASE_URL}/files/download/${fileId}`, {
+    withCredentials: true,
+  });
+
+  // Create a link element
+  const link = document.createElement('a');
+  
+  console.log("download data", response.data)
+
+  // Set the download attribute with the file name
+  link.download = response.data.fileName;
+  
+  // Convert the base64 string into a Blob (binary large object)
+  const byteCharacters = atob(response.data.base64Data);
+  const byteArrays = [];
+  
+  for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+    const slice = byteCharacters.slice(offset, offset + 1024);
+    const byteNumbers = new Array(slice.length);
+    
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+    
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, { type: response.fileType });
+
+  // Create a URL for the Blob and set it as the href of the link
+  const url = window.URL.createObjectURL(blob);
+  link.href = url;
+
+  // Append the link to the document body, trigger a click to download, and remove the link afterward
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // Revoke the Blob URL after a short delay to free up memory
+  setTimeout(() => window.URL.revokeObjectURL(url), 0);
+}
+
 /**
  * 🔹 Delete File API Call
  */

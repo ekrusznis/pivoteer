@@ -1,6 +1,7 @@
 package com.my.pivoteer.api.uploads.service
 
 import com.my.pivoteer.api.uploads.model.FileUpload
+import com.my.pivoteer.api.uploads.model.dto.FileResponseDto
 import com.my.pivoteer.api.uploads.model.dto.FileUploadDto
 import com.my.pivoteer.api.uploads.repository.FileUploadRepository
 import com.my.pivoteer.api.uploads.service.mapper.FileUploadMapper
@@ -20,15 +21,13 @@ class FileUploadService(
     fun uploadFile(userId: UUID, file: MultipartFile): FileUploadDto {
         val user = userRepository.findById(userId).orElseThrow { RuntimeException("User not found") }
 
-        val fileExtension = file.originalFilename
-            ?.substringAfterLast(".", "UNKNOWN")
-            ?.uppercase()
-            ?: "UNKNOWN"
+        val mimeType = file.contentType ?: "application/octet-stream"  // Default MIME type if null
+
 
         val fileUpload = FileUpload(
             user = user,
             filename = file.originalFilename ?: "unknown",
-            fileType = fileExtension,
+            fileType = mimeType,
             fileSize = file.size,
             fileData = file.bytes
         )
@@ -64,5 +63,10 @@ class FileUploadService(
     @Transactional(readOnly = true)
     fun getFileById(id: UUID): FileUpload? {
         return fileUploadRepository.findById(id).orElse(null)
+    }
+
+    fun getFileBase64(fileId: UUID): FileResponseDto {
+        val file = fileUploadRepository.findById(fileId).orElse(null)
+        return FileUploadMapper.toResponseDTO(file)
     }
 }

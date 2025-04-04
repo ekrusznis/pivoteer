@@ -12,7 +12,7 @@ import {
   FaEllipsisV
 } from "react-icons/fa";
 import Logo from "../../assets/piv_icon150.png";
-import { uploadFile, getUserFiles, logoutUser, downloadFile, deleteFile } from "../../api";
+import { uploadFile, getUserFiles, logoutUser, downloadFile, deleteFile, downloadExcel } from "../../api";
 import { useNavigate } from "react-router-dom";
 import AnalysisModal from "./Modals/AnalysisModal";
 
@@ -55,7 +55,7 @@ const Dashboard = () => {
   };
 
   const handleDownload = async (fileId) => {
-    await downloadFile(fileId);
+    await downloadExcel(fileId);
   };
 
   const handleDelete = async (fileId) => {
@@ -128,9 +128,6 @@ const Dashboard = () => {
               <FaFileUpload size={24} /> Upload File
               <input type="file" onChange={handleFileUpload} style={{ display: "none" }} />
             </label>
-            <button style={styles.analyzeButton} onClick={handleAnalyze} disabled={loading}>
-              {loading ? "Analyzing..." : "Analyze"}
-            </button>
           </div>
           {selectedFile && <p style={styles.selectedFileText}><FaFileAlt /> {selectedFile.name} ({selectedFile.size} bytes)</p>}
         </div>
@@ -226,7 +223,7 @@ const DataTable = ({ title, items, handleDelete }) => {
                         <div style={styles.dropdownMenu}>
                           <button
                             style={styles.dropdownItem}
-                            onClick={() => downloadFile(item.id)}
+                            onClick={() => downloadExcel(item.id)}
                           >
                             📥 Download
                           </button>
@@ -440,7 +437,6 @@ const styles = {
   list: { listStyle: "none", padding: 0 },
   listItem: { padding: "5px 0", borderBottom: "1px solid rgba(255,255,255,0.2)" },
   emptyText: { color: "#CFCFCF", fontSize: "0.9rem" },
-  nav: { display: "flex", gap: "20px" },
   tabs: { display: "flex", justifyContent: "center", gap: "10px", marginBottom: "20px" },
   tab: { background: "none", border: "2px solid white", padding: "10px 20px", cursor: "pointer", color: "white", fontSize: "1rem", transition: "0.3s" },
   activeTab: { background: "#6B46C1", color: "white", borderColor: "#6B46C1" },

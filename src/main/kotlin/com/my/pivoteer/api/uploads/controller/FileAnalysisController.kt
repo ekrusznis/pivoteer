@@ -6,6 +6,7 @@ import com.my.pivoteer.api.uploads.model.dto.ProcessedFileDto
 import com.my.pivoteer.api.uploads.service.FileAnalysisService
 import com.my.pivoteer.api.utils.response.ApiResponse
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -29,5 +30,10 @@ class FileAnalysisController(
     fun getFileAnalysisOptions(@RequestParam("fileId") fileId: UUID): ApiResponse<FileAnalysisOptionsDto> {
         val options = fileAnalysisService.getAnalysisOptions(fileId)
         return ApiResponse(true, "Fetched analysis options", options)
+    }
+
+    @GetMapping("/get-data/{fileId}")
+    fun getData(@PathVariable("fileId") fileId: UUID): List<Map<String, Any>> {
+        return fileAnalysisService.parseExcelFile(fileId)
     }
 }

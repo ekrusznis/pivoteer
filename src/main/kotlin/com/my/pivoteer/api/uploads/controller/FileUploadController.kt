@@ -1,9 +1,13 @@
 package com.my.pivoteer.api.uploads.controller
 
+import com.my.pivoteer.api.uploads.model.dto.FileResponseDto
 import com.my.pivoteer.api.uploads.model.dto.FileUploadDto
 import com.my.pivoteer.api.uploads.service.FileUploadService
 import com.my.pivoteer.api.user.service.UserService
 import com.my.pivoteer.api.utils.response.ApiResponse
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -39,16 +43,9 @@ class FileUploadController(
         return ApiResponse(true, "Fetched user files", files)
     }
 
-    @GetMapping("/download/{fileId}", produces = ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"])
-    fun downloadFile(@PathVariable fileId: UUID, response: HttpServletResponse) {
-        val file = fileUploadService.getFileById(fileId)
-            ?: throw Exception("File not found")
-
-        response.contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        response.setHeader("Content-Disposition", "attachment; filename=\"${file.filename}\"")
-        response.outputStream.write(file.fileData) // ✅ Streams the file
-
-        response.outputStream.flush()
+    @GetMapping("/download/{fileId}")
+    fun downloadFile(@PathVariable fileId: UUID): FileResponseDto {
+        return fileUploadService.getFileBase64(fileId)
     }
 
     @Transactional

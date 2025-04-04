@@ -3,8 +3,7 @@ package com.my.pivoteer.api.uploads.service
 import com.my.pivoteer.api.uploads.model.FileUpload
 import com.my.pivoteer.api.uploads.model.dto.*
 import com.my.pivoteer.api.uploads.repository.FileUploadRepository
-import org.apache.poi.ss.usermodel.CellType
-import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.ss.usermodel.*
 import org.springframework.stereotype.Service
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
@@ -360,6 +359,12 @@ class FileAnalysisService(
         return saveGeneratedFile(outputStream, "macros_${file.filename}")
     }
     private fun saveGeneratedFile(outputStream: ByteArrayOutputStream, filename: String): ProcessedFileDto {
+
+        val directory = File("generated_files")
+        if (!directory.exists()) {
+            directory.mkdirs()  // Create the directory if it doesn't exist
+        }
+
         val fileBytes = outputStream.toByteArray()
         val filePath = "/generated_files/$filename"
 
@@ -369,6 +374,49 @@ class FileAnalysisService(
             filename = filename,
             downloadUrl = "http://localhost:8080/api/files/download/$filename"
         )
+    }
+
+    // Retrieve and parse Excel file
+    fun parseExcelFile(fileId: UUID): List<Map<String, Any>> {
+        val excelFile = fileUploadRepository.findById(fileId).orElseThrow { RuntimeException("File not found") }
+        val inputStream = ByteArrayInputStream(excelFile.fileData)
+        val workbook: Workbook = WorkbookFactory.create(inputStream)
+        val sheet = workbook.getSheetAt(0) // Read first sheet
+
+        val rows = mutableListOf<Map<String, Any>>()
+        val headerRow = sheet.getRow(0) ?: throw IllegalArgumentException("Excel file is empty")
+
+        val headers = mutableListOf<String>()
+        for (cell in headerRow) {
+            headers.add(cell.stringCellValue)
+        }
+
+        // Process rows dynamically
+        for (rowIdx in 1 until sheet.physicalNumberOfRows) {
+            val row = sheet.getRow(rowIdx) ?: continue
+            val rowData = mutableMapOf<String, Any>()
+
+            for (colIdx in headers.indices) {
+                val cell = row.getCell(colIdx, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+                rowData[headers[colIdx]] = getCellValue(cell)
+            }
+            rows.add(rowData)
+        }
+
+        workbook.close()
+        return rows
+    }
+
+    // Dynamically extract cell values
+    private fun getCellValue(cell: Cell): Any {
+        return when (cell.cellType) {
+            CellType.STRING -> cell.stringCellValue
+            CellType.NUMERIC -> cell.numericCellValue
+            CellType.BOOLEAN -> cell.booleanCellValue
+            CellType.FORMULA -> cell.cellFormula
+            CellType.BLANK -> ""
+            else -> "UNKNOWN"
+        }
     }
 
 }
