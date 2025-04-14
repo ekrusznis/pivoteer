@@ -47,12 +47,39 @@ const Dashboard = () => {
     }
   };
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
     }
   };
+
+  const handleFileSave = async (event) => {
+
+    if (!selectedFile) {
+      alert("Please upload a file first.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      const response = await uploadFile(formData);
+
+      if (response.data && response.data.id) {
+        setUploadedFiles((prevFiles) => [...prevFiles, response.data]);
+      } else {
+        console.error("Invalid response data:", response);
+        alert("Something went wrong! Could not analyze file.");
+      }
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Error analyzing file:", error);
+      alert("Failed to analyze file. Please try again.");
+    }
+    setLoading(false);
+  }
 
   const handleDownload = async (fileId) => {
     await downloadExcel(fileId);
@@ -125,10 +152,17 @@ const Dashboard = () => {
           <p style={styles.uploadText}>Upload your spreadsheets (xls, xlsx, csv) for analysis.</p>
           <div style={styles.uploadActions}>
             <label style={styles.uploadLabel}>
-              <FaFileUpload size={24} /> Upload File
+              <FaFileUpload size={24} /> Select File
               <input type="file" onChange={handleFileUpload} style={{ display: "none" }} />
             </label>
           </div>
+          <div style={styles.uploadActions}>
+            <label style={styles.uploadLabel}>
+              <FaFileUpload size={24} /> Upload File
+              <button onClick={handleFileSave} style={{ display: "none" }} />
+            </label>
+          </div>
+
           {selectedFile && <p style={styles.selectedFileText}><FaFileAlt /> {selectedFile.name} ({selectedFile.size} bytes)</p>}
         </div>
       </section>
