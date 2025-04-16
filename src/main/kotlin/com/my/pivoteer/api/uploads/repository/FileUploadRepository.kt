@@ -13,5 +13,8 @@ interface FileUploadRepository : JpaRepository<FileUpload, UUID> {
     // ✅ Custom Query to Fetch Only Metadata (Excluding file_data)
     @Query("SELECT f.id, f.user.id, f.filename, f.fileType, f.fileSize, f.uploadedAt FROM FileUpload f WHERE f.user.id = :userId")
     fun findFileMetadataByUserId(userId: UUID): List<Array<Any>>
+    
+    
+    
 
 }
