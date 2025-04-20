@@ -31,11 +31,14 @@ const Profile = () => {
       {/* ✅ Header (Similar to Dashboard) */}
       <header style={styles.header}>
         <h1 style={styles.logo}>
-        <img src={Logo} alt="Pivoteer Logo" style={styles.logoImage} />
-                  Pivoteer
-                </h1>
+          <img src={Logo} alt="Pivoteer Logo" style={styles.logoImage} />
+          Pivoteer
+        </h1>
         <nav style={styles.nav}>
-          <button style={styles.navButton} onClick={() => navigate("/dashboard")}>
+          <button
+            style={styles.navButton}
+            onClick={() => navigate("/dashboard")}
+          >
             Dashboard
           </button>
           <button style={styles.navButton} onClick={handleLogout}>
@@ -49,10 +52,21 @@ const Profile = () => {
         <h2 style={styles.sectionTitle}>Profile</h2>
         {user ? (
           <div style={styles.profileBox}>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Subscription Plan:</strong> {user.subscriptionPlanId || "Free"}</p>
-            <p><strong>Account Created:</strong> {user.createdAt}</p> {/* ✅ Fix: Use string from API */}
-            <p><strong>Last File Upload:</strong> {user.lastFileUploadDate || "No uploads yet"}</p>
+            <p>
+              <strong>Email:</strong> {user.email}
+            </p>
+            <p>
+              <strong>Subscription Plan:</strong>{" "}
+              {user.subscriptionPlanId || "Free"}
+            </p>
+            <p>
+              <strong>Account Created:</strong> {user.createdAt}
+            </p>{" "}
+            {/* ✅ Fix: Use string from API */}
+            <p>
+              <strong>Last File Upload:</strong>{" "}
+              {user.lastFileUploadDate || "No uploads yet"}
+            </p>
           </div>
         ) : (
           <p>Loading user data...</p>
@@ -65,7 +79,7 @@ const Profile = () => {
 /* ✅ Styles */
 const styles = {
   container: {
-    width: "100vw",
+    // width: "100vw",
     minHeight: "100vh",
     background: "linear-gradient(135deg, #1C1C2D, #2A2245)",
     color: "white",
@@ -86,17 +100,17 @@ const styles = {
     zIndex: 1000,
     backdropFilter: "blur(10px)",
   },
-      logo: {
-        fontSize: "1.8rem",
-        fontWeight: "bold",
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-      },
-    logoImage: {
-      height: "40px", // Adjust as needed
-      width: "auto",
-    },
+  logo: {
+    fontSize: "1.8rem",
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  },
+  logoImage: {
+    height: "40px", // Adjust as needed
+    width: "auto",
+  },
   nav: { display: "flex", gap: "20px" },
   navButton: {
     background: "transparent",

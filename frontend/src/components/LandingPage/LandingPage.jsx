@@ -14,7 +14,11 @@ const LandingPage = () => {
   return (
     <div style={{ width: "100vw", overflow: "hidden" }}>
       {/* ✅ Pass refs to Header for smooth scrolling */}
-      <Header featuresRef={featuresRef} pricingRef={pricingRef} contactRef={contactRef} />
+      <Header
+        featuresRef={featuresRef}
+        pricingRef={pricingRef}
+        contactRef={contactRef}
+      />
 
       {/* Hero Section */}
       <section style={styles.heroSection}>
@@ -31,20 +35,46 @@ const LandingPage = () => {
 
         {/* ✅ Centered Images Below Button */}
         <div style={styles.imageContainer}>
-          <img src="/images/neon_ex.png" alt="Example Graphic" style={styles.heroImage} />
-          <img src="/images/neon_arrow.png" alt="Arrow Graphic" style={styles.heroImage} />
-          <img src="/images/neon_pivots.png" alt="Pivot Graphic" style={styles.heroImage} />
+          <img
+            src="/images/neon_ex.png"
+            alt="Example Graphic"
+            style={styles.heroImage}
+          />
+          <img
+            src="/images/neon_arrow.png"
+            alt="Arrow Graphic"
+            style={styles.heroImage}
+          />
+          <img
+            src="/images/neon_pivots.png"
+            alt="Pivot Graphic"
+            style={styles.heroImage}
+          />
         </div>
 
         {/* ✅ Semi-Transparent Background Images */}
-        <img src="/images/shape2.png" alt="Pivot Table Graphic" style={styles.shapeLeft} />
-        <img src="/images/shape1.png" alt="Data Analytics Graphic" style={styles.shapeRight} />
+        <img
+          src="/images/shape2.png"
+          alt="Pivot Table Graphic"
+          style={styles.shapeLeft}
+        />
+        <img
+          src="/images/shape1.png"
+          alt="Data Analytics Graphic"
+          style={styles.shapeRight}
+        />
       </section>
 
       {/* Sections with Assigned Refs for Scrolling */}
-      <section ref={featuresRef}><FeatureSection /></section>
-      <section ref={pricingRef}><PricingSection /></section>
-      <section ref={contactRef}><ContactSection /></section>
+      <section ref={featuresRef}>
+        <FeatureSection />
+      </section>
+      <section ref={pricingRef}>
+        <PricingSection />
+      </section>
+      <section ref={contactRef}>
+        <ContactSection />
+      </section>
 
       <Footer />
     </div>
@@ -63,24 +93,24 @@ const styles = {
     alignItems: "center",
     textAlign: "center",
     background: "linear-gradient(135deg, #2A2245, #1C1C2D)",
-    clipPath: "polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%)"
+    clipPath: "polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%)",
   },
   heroTitle: {
     fontSize: "3.5rem",
     fontWeight: "bold",
     color: "#ffffff",
-    textShadow: "0px 4px 10px rgba(157, 118, 249, 0.8)"
+    textShadow: "0px 4px 10px rgba(157, 118, 249, 0.8)",
   },
   heroSubtitle: {
     fontSize: "1.3rem",
     maxWidth: "700px",
     margin: "20px auto",
-    color: "#CFCFCF"
+    color: "#CFCFCF",
   },
   buttonContainer: {
     marginTop: "20px",
     display: "flex",
-    gap: "20px"
+    gap: "20px",
   },
   primaryButton: {
     padding: "12px 24px",
@@ -92,7 +122,7 @@ const styles = {
     transition: "all 0.3s ease-in-out",
     boxShadow: "0px 0px 12px rgba(157, 118, 249, 0.6)",
     backgroundColor: "#9D76F9",
-    color: "white"
+    color: "white",
   },
   /* ✅ Image Container (For Centering Images Below Button) */
   imageContainer: {
@@ -100,7 +130,7 @@ const styles = {
     display: "flex",
     gap: "20px",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   heroImage: {
     width: "120px", // Adjust image size
@@ -114,7 +144,7 @@ const styles = {
     left: "0%",
     width: "250px",
     opacity: "0.2",
-    zIndex: "-1"
+    zIndex: "-1",
   },
   shapeRight: {
     position: "absolute",
@@ -122,8 +152,8 @@ const styles = {
     right: "0%",
     width: "300px",
     opacity: "0.2",
-    zIndex: "-1"
-  }
+    zIndex: "-1",
+  },
 };
 
 export default LandingPage;

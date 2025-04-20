@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 axios.defaults.withCredentials = true;
 
 const getAuthHeaders = () => {
@@ -14,11 +15,17 @@ const getAuthHeaders = () => {
  */
 export const registerUser = async (userData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/register`, userData);
+    const response = await axios.post(
+      `${API_BASE_URL}/auth/register`,
+      userData
+    );
     localStorage.setItem("userId", response.data.data.userId); // ✅ Store userId instead of email
     return response.data;
   } catch (error) {
-    console.error("Registration failed:", error.response?.data || error.message);
+    console.error(
+      "Registration failed:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -59,12 +66,16 @@ export const logoutUser = async () => {
  */
 export const uploadFile = async (formData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/files/upload`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      withCredentials: true, // ✅ Sends the stored JWT cookie automatically
-    });
+    const response = await axios.post(
+      `${API_BASE_URL}/files/upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true, // ✅ Sends the stored JWT cookie automatically
+      }
+    );
 
     return response.data;
   } catch (error) {
@@ -78,13 +89,19 @@ export const uploadFile = async (formData) => {
  */
 export const getUserFiles = async (userId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/files/user?userId=${userId}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/files/user?userId=${userId}`,
+      {
+        withCredentials: true,
+      }
+    );
 
     return response.data.data; // ✅ Only metadata, no file data!
   } catch (error) {
-    console.error("Failed to fetch user files:", error.response?.data || error.message);
+    console.error(
+      "Failed to fetch user files:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -94,10 +111,13 @@ export const getUserFiles = async (userId) => {
  */
 export const downloadFile = async (fileId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/files/download/${fileId}`, {
-      responseType: "blob", // ✅ Ensure it downloads as a file
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/files/download/${fileId}`,
+      {
+        responseType: "blob", // ✅ Ensure it downloads as a file
+        withCredentials: true,
+      }
+    );
 
     // Create a Blob URL for the file
     const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -123,37 +143,39 @@ export const downloadFile = async (fileId) => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   } catch (error) {
-    console.error("File download failed:", error.response?.data || error.message);
+    console.error(
+      "File download failed:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
 export const downloadExcel = async (fileId) => {
-
   const response = await axios.get(`${API_BASE_URL}/files/download/${fileId}`, {
     withCredentials: true,
   });
 
   // Create a link element
-  const link = document.createElement('a');
-  
-  console.log("download data", response.data)
+  const link = document.createElement("a");
+
+  console.log("download data", response.data);
 
   // Set the download attribute with the file name
   link.download = response.data.fileName;
-  
+
   // Convert the base64 string into a Blob (binary large object)
   const byteCharacters = atob(response.data.base64Data);
   const byteArrays = [];
-  
+
   for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
     const slice = byteCharacters.slice(offset, offset + 1024);
     const byteNumbers = new Array(slice.length);
-    
+
     for (let i = 0; i < slice.length; i++) {
       byteNumbers[i] = slice.charCodeAt(i);
     }
-    
+
     const byteArray = new Uint8Array(byteNumbers);
     byteArrays.push(byteArray);
   }
@@ -168,10 +190,10 @@ export const downloadExcel = async (fileId) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  
+
   // Revoke the Blob URL after a short delay to free up memory
   setTimeout(() => window.URL.revokeObjectURL(url), 0);
-}
+};
 
 /**
  * 🔹 Delete File API Call
@@ -182,7 +204,10 @@ export const deleteFile = async (fileId) => {
       withCredentials: true,
     });
   } catch (error) {
-    console.error("File deletion failed:", error.response?.data || error.message);
+    console.error(
+      "File deletion failed:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -191,29 +216,42 @@ export const deleteFile = async (fileId) => {
  */
 export const getFileAnalysisOptions = async (fileId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/files/analysis-options?fileId=${fileId}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/files/analysis-options?fileId=${fileId}`,
+      {
+        withCredentials: true,
+      }
+    );
     return response.data.data;
   } catch (error) {
-    console.error("Failed to fetch file analysis options:", error.response?.data || error.message);
+    console.error(
+      "Failed to fetch file analysis options:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 export const processFileSelections = async (fileId, selectedOptions) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/files/process-selection`, {
-      fileId,
-      pivotTables: selectedOptions.pivotTables || [],
-      visualizations: selectedOptions.visualizations || [],
-      macros: selectedOptions.macros || [],
-    }, {
-      withCredentials: true,
-    });
+    const response = await axios.post(
+      `${API_BASE_URL}/files/process-selection`,
+      {
+        fileId,
+        pivotTables: selectedOptions.pivotTables || [],
+        visualizations: selectedOptions.visualizations || [],
+        macros: selectedOptions.macros || [],
+      },
+      {
+        withCredentials: true,
+      }
+    );
 
     return response.data.data; // ✅ Returns processed file download links
   } catch (error) {
-    console.error("File processing failed:", error.response?.data || error.message);
+    console.error(
+      "File processing failed:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -224,12 +262,18 @@ export const processFileSelections = async (fileId, selectedOptions) => {
 
 export const getUserProfileInfo = async (userId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/users/profile/${userId}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/users/profile/${userId}`,
+      {
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
-    console.error("Error fetching user profile:", error.response?.data || error.message);
+    console.error(
+      "Error fetching user profile:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };

@@ -1,14 +1,16 @@
 /* 🌙 Global Dark Theme */
+
 body {
-  background: linear-gradient(135deg, #1C1C2D, #2A2245);
+  background: linear-gradient(135deg, #1c1c2d, #2a2245);
   color: white;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -35,7 +37,7 @@ header {
 }
 
 .nav-link:hover {
-  color: #9D76F9;
+  color: #9d76f9;
 }
 
 /* 🟠 Nav Buttons */
@@ -50,19 +52,19 @@ header {
 }
 
 .nav-button:hover {
-  background: #9D76F9;
-  border-color: #9D76F9;
+  background: #9d76f9;
+  border-color: #9d76f9;
   transform: scale(1.05);
 }
 
 /* 🟢 Register Button (Special Color) */
 .nav-button.register {
-  background: #9D76F9;
+  background: #9d76f9;
   border: none;
 }
 
 .nav-button.register:hover {
-  background: #6B46C1;
+  background: #6b46c1;
 }
 
 /* 🎨 Hero Section */
@@ -74,7 +76,7 @@ header {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(135deg, #2A2245, #1C1C2D);
+  background: linear-gradient(135deg, #2a2245, #1c1c2d);
   clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 50% 100%, 0% 85%);
 }
 
@@ -89,7 +91,7 @@ header {
   font-size: 1.2rem;
   max-width: 700px;
   margin: 20px auto;
-  color: #CFCFCF;
+  color: #cfcfcf;
 }
 
 /* 🌟 Buttons */

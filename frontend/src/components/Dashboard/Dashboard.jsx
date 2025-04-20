@@ -9,12 +9,20 @@ import {
   FaUser,
   FaDownload,
   FaTrash,
-  FaEllipsisV
+  FaEllipsisV,
 } from "react-icons/fa";
 import Logo from "../../assets/piv_icon150.png";
-import { uploadFile, getUserFiles, logoutUser, downloadFile, deleteFile, downloadExcel } from "../../api";
+import {
+  uploadFile,
+  getUserFiles,
+  logoutUser,
+  downloadFile,
+  deleteFile,
+  downloadExcel,
+} from "../../api";
 import { useNavigate } from "react-router-dom";
 import AnalysisModal from "./Modals/AnalysisModal";
+import UploadedFilesTable from "./UploadedFiles/UploadedFilesTable";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -47,6 +55,8 @@ const Dashboard = () => {
     }
   };
 
+  console.log("uploadedFiles", uploadedFiles);
+
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -55,7 +65,6 @@ const Dashboard = () => {
   };
 
   const handleFileSave = async (event) => {
-
     if (!selectedFile) {
       alert("Please upload a file first.");
       return;
@@ -79,7 +88,7 @@ const Dashboard = () => {
       alert("Failed to analyze file. Please try again.");
     }
     setLoading(false);
-  }
+  };
 
   const handleDownload = async (fileId) => {
     await downloadExcel(fileId);
@@ -149,11 +158,17 @@ const Dashboard = () => {
 
       <section style={styles.uploadSection}>
         <div style={styles.uploadBox}>
-          <p style={styles.uploadText}>Upload your spreadsheets (xls, xlsx, csv) for analysis.</p>
+          <p style={styles.uploadText}>
+            Upload your spreadsheets (xls, xlsx, csv) for analysis.
+          </p>
           <div style={styles.uploadActions}>
             <label style={styles.uploadLabel}>
               <FaFileUpload size={24} /> Select File
-              <input type="file" onChange={handleFileUpload} style={{ display: "none" }} />
+              <input
+                type="file"
+                onChange={handleFileUpload}
+                style={{ display: "none" }}
+              />
             </label>
           </div>
           <div style={styles.uploadActions}>
@@ -163,121 +178,57 @@ const Dashboard = () => {
             </label>
           </div>
 
-          {selectedFile && <p style={styles.selectedFileText}><FaFileAlt /> {selectedFile.name} ({selectedFile.size} bytes)</p>}
+          {selectedFile && (
+            <p style={styles.selectedFileText}>
+              <FaFileAlt /> {selectedFile.name} ({selectedFile.size} bytes)
+            </p>
+          )}
         </div>
       </section>
 
       <section style={styles.contentSection}>
         <div style={styles.tabs}>
-          {["Uploaded Files", "Pivot Tables", "Visualizations", "Macros"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{ ...styles.tab, ...(activeTab === tab ? styles.activeTab : {}) }}
-            >
-              {tab}
-            </button>
-          ))}
+          {["Uploaded Files", "Pivot Tables", "Visualizations", "Macros"].map(
+            (tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{
+                  ...styles.tab,
+                  ...(activeTab === tab ? styles.activeTab : {}),
+                }}
+              >
+                {tab}
+              </button>
+            )
+          )}
         </div>
 
         <div style={styles.tabContent}>
-          {activeTab === "Uploaded Files" && <DataTable title="Uploaded Files" items={uploadedFiles} handleDelete={handleDelete} />}
-          {activeTab === "Pivot Tables" && <DataTable title="Pivot Tables" items={pivotTables} />}
-          {activeTab === "Visualizations" && <DataTable title="Visualizations" items={visualizations} />}
-          {activeTab === "Macros" && <DataTable title="Macros" items={macros} />}
+          {activeTab === "Uploaded Files" && (
+            <UploadedFilesTable
+              title="Uploaded Files"
+              items={uploadedFiles}
+              handleDelete={handleDelete}
+            />
+          )}
+          {activeTab === "Pivot Tables" && (
+            <UploadedFilesTable title="Pivot Tables" items={pivotTables} />
+          )}
+          {activeTab === "Visualizations" && (
+            <UploadedFilesTable title="Visualizations" items={visualizations} />
+          )}
+          {activeTab === "Macros" && (
+            <UploadedFilesTable title="Macros" items={macros} />
+          )}
         </div>
       </section>
 
-      {showAnalysisModal && <AnalysisModal fileId={analyzingFileId} onClose={() => setShowAnalysisModal(false)} />}
-    </div>
-  );
-};
-
-const DataTable = ({ title, items, handleDelete }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(null); // Track open dropdown for each row
-
-  const toggleDropdown = (itemId) => {
-    setDropdownOpen(dropdownOpen === itemId ? null : itemId);
-  };
-  const formatFileSize = (sizeInBytes) => {
-    if (sizeInBytes >= 1e9) {
-      return (sizeInBytes / 1e9).toFixed(2) + " GB";
-    } else {
-      return (sizeInBytes / 1e6).toFixed(2) + " MB";
-    }
-  };
-
-  const formatDate = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZoneName: "short"
-    });
-  };
-
-  return (
-    <div style={styles.card}>
-      <h3 style={styles.cardTitle}>{title}</h3>
-      {items.length > 0 ? (
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Uploaded By</th>
-              <th>Filename</th>
-              <th>File Type</th>
-              <th>File Size</th>
-              <th>Uploaded At</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>{item.uploadedBy}</td>
-                <td>{item.filename}</td>
-                <td>{item.fileType}</td>
-                <td>{formatFileSize(item.fileSize)}</td>
-                <td>{formatDate(item.uploadedAt)}</td>
-                {handleDelete && (
-                  <td style={styles.actionButtons}>
-                    <div style={styles.dropdownContainer}>
-                      <button
-                        style={styles.dropdownButton}
-                        onClick={() => toggleDropdown(item.id)}
-                      >
-                        <FaEllipsisV />
-                      </button>
-                      {dropdownOpen === item.id && (
-                        <div style={styles.dropdownMenu}>
-                          <button
-                            style={styles.dropdownItem}
-                            onClick={() => downloadExcel(item.id)}
-                          >
-                            📥 Download
-                          </button>
-                          <button
-                            style={styles.dropdownItemDelete}
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            🗑 Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p style={styles.emptyText}>No {title.toLowerCase()} available.</p>
+      {showAnalysisModal && (
+        <AnalysisModal
+          fileId={analyzingFileId}
+          onClose={() => setShowAnalysisModal(false)}
+        />
       )}
     </div>
   );
@@ -309,47 +260,47 @@ const styles = {
     backdropFilter: "blur(10px)",
   },
   dropdownContainer: { position: "relative", display: "inline-block" },
-    dropdownButton: {
-      background: "transparent",
-      border: "none",
-      cursor: "pointer",
-      fontSize: "16px",
-    },
-    dropdownMenu: {
-      position: "absolute",
-      top: "100%",
-      right: 0,
-      background: "#2A2245",
-      borderRadius: "5px",
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
-      zIndex: 1000,
-      display: "flex",
-      flexDirection: "column",
-      width: "120px",
-    },
-    dropdownItem: {
-      padding: "8px",
-      cursor: "pointer",
-      background: "none",
-      border: "none",
-      color: "#ffffff",
-      textAlign: "left",
-    },
-    dropdownItemDelete: {
-      padding: "8px",
-      cursor: "pointer",
-      background: "#E53E3E",
-      color: "white",
-      border: "none",
-      textAlign: "left",
-    },
-      logo: {
-        fontSize: "1.8rem",
-        fontWeight: "bold",
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-      },
+  dropdownButton: {
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "16px",
+  },
+  dropdownMenu: {
+    position: "absolute",
+    top: "100%",
+    right: 0,
+    background: "#2A2245",
+    borderRadius: "5px",
+    boxShadow: "0px 4px 10px rgba(0,0,0,0.2)",
+    zIndex: 1000,
+    display: "flex",
+    flexDirection: "column",
+    width: "120px",
+  },
+  dropdownItem: {
+    padding: "8px",
+    cursor: "pointer",
+    background: "none",
+    border: "none",
+    color: "#ffffff",
+    textAlign: "left",
+  },
+  dropdownItemDelete: {
+    padding: "8px",
+    cursor: "pointer",
+    background: "#E53E3E",
+    color: "white",
+    border: "none",
+    textAlign: "left",
+  },
+  logo: {
+    fontSize: "1.8rem",
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  },
   nav: { display: "flex", gap: "20px" },
   navButton: {
     background: "transparent",
@@ -369,10 +320,10 @@ const styles = {
     borderCollapse: "collapse",
     marginTop: "10px",
   },
-    logoImage: {
-      height: "40px", // Adjust as needed
-      width: "auto",
-    },
+  logoImage: {
+    height: "40px", // Adjust as needed
+    width: "auto",
+  },
   actionButtons: { position: "relative" },
   downloadButton: {
     background: "#6B46C1",
@@ -442,7 +393,7 @@ const styles = {
 
   /* ✅ Full-width Content Section */
   contentSection: {
-    width: "100%",
+    // width: "100%",
     padding: "60px 20px",
     textAlign: "center",
     background: "linear-gradient(135deg, #1C1C2D, #2A2245)",
@@ -469,14 +420,28 @@ const styles = {
   },
   cardTitle: { fontSize: "1.3rem", marginBottom: "10px" },
   list: { listStyle: "none", padding: 0 },
-  listItem: { padding: "5px 0", borderBottom: "1px solid rgba(255,255,255,0.2)" },
+  listItem: {
+    padding: "5px 0",
+    borderBottom: "1px solid rgba(255,255,255,0.2)",
+  },
   emptyText: { color: "#CFCFCF", fontSize: "0.9rem" },
-  tabs: { display: "flex", justifyContent: "center", gap: "10px", marginBottom: "20px" },
-  tab: { background: "none", border: "2px solid white", padding: "10px 20px", cursor: "pointer", color: "white", fontSize: "1rem", transition: "0.3s" },
+  tabs: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "10px",
+    marginBottom: "20px",
+  },
+  tab: {
+    background: "none",
+    border: "2px solid white",
+    padding: "10px 20px",
+    cursor: "pointer",
+    color: "white",
+    fontSize: "1rem",
+    transition: "0.3s",
+  },
   activeTab: { background: "#6B46C1", color: "white", borderColor: "#6B46C1" },
-  tabContent: { textAlign: "center" }
-
+  tabContent: { textAlign: "center" },
 };
 
 export default Dashboard;
-

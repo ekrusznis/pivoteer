@@ -7,7 +7,8 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    navigate("/login");
+    console.log("Registering:", email, password);
+    navigate("/dashboard");
   };
 
   return (
