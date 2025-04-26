@@ -1,0 +1,12 @@
+spring:
+  mail:
+    host: smtp.mailserver.com
+    port: 587
+    username: admin@mypivoteer.com
+    password: !123!MyPivoteer
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

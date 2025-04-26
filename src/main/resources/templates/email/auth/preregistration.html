@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Welcome to MyPivoteer Pre-Launch!</title>
+</head>
+
+<body style="margin:0; padding:0; font-family: Arial, sans-serif; background: #1C1C2D; color: white;">
+
+<!-- Include Header -->
+<th:block th:replace="email/common/header :: header"></th:block>
+
+<!-- Email Body -->
+<div style="padding: 20px;">
+    <h1>You're In!</h1>
+    <p>Hi <span th:text="${name}">User</span>,</p>
+
+    <p>Thank you for pre-registering for <b>MyPivoteer</b>! You're officially on the list to receive <b>one free month</b> of full access at launch 🚀.</p>
+
+    <p>We’ll keep you updated as launch day gets closer. You’re now part of the future of smart spreadsheet management!</p>
+
+    <p>Follow our journey:</p>
+
+    <a href="https://mypivoteer.com" style="padding: 10px 20px; background: #9D76F9; color: white; text-decoration: none; border-radius: 5px;">Visit MyPivoteer</a>
+
+    <br/><br/>
+    <p>Exciting times ahead,<br/><b>The MyPivoteer Team</b></p>
+</div>
+
+<!-- Include Footer -->
+<th:block th:replace="email/common/footer :: footer"></th:block>
+
+</body>
+</html>
