@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Support Ticket Submitted</title>
+</head>
+<body style="font-family: Arial, sans-serif; background: #1C1C2D; color: white; padding: 20px;">
+<h1>New Support Ticket Created</h1>
+<p><strong>Ticket ID:</strong> <span th:text="${ticketId}">1234</span></p>
+<p><strong>Title:</strong> <span th:text="${title}">Issue Title</span></p>
+<p><strong>Message:</strong></p>
+<p th:text="${message}">The user submitted this message...</p>
+
+<br/>
+<p>View the full ticket in the Support Panel.</p>
+</body>
+</html>

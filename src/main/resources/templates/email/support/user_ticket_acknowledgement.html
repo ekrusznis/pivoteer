@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="email/common/header :: header"></th:block>
+
+<head>
+    <title>Support Ticket Received</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; background: #1C1C2D; color: white; padding: 20px;">
+<h1>We've Got Your Ticket!</h1>
+<p>Hi <span th:text="${userName}">User</span>,</p>
+
+<p>Thank you for contacting <b>MyPivoteer Support</b>. Your ticket has been received!</p>
+
+<p><b>Ticket ID:</b> <span th:text="${ticketId}"></span></p>
+<p><b>Subject:</b> <span th:text="${title}"></span></p>
+<p><b>Message:</b></p>
+<blockquote th:text="${message}">Your message here...</blockquote>
+
+<p>Our team will review your request and get back to you as soon as possible. 🚀</p>
+
+<p>In the meantime, feel free to visit our <a href="https://mypivoteer.com/help" style="color: #9D76F9;">Help Center</a>.</p>
+
+<br/>
+<p>Thanks for being part of MyPivoteer!</p>
+<p><b>- The MyPivoteer Team</b></p>
+</body>
+
+<th:block th:replace="email/common/footer :: footer"></th:block>
+
+</html>
