@@ -82,9 +82,9 @@ class FileAnalysisService(
     }
 
     // ✅ Detects the **data type** of a column
-    private fun detectCellType(cell: org.apache.poi.ss.usermodel.Cell): String {
+    private fun detectCellType(cell: Cell): String {
         return when {
-            cell.cellType == CellType.NUMERIC && org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell) -> "Date"
+            cell.cellType == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell) -> "Date"
             cell.cellType == CellType.NUMERIC -> "Numeric"
             cell.cellType == CellType.STRING -> "Text"
             cell.cellType == CellType.BOOLEAN -> "Boolean"
@@ -93,9 +93,9 @@ class FileAnalysisService(
     }
 
     // ✅ Extracts the **actual value** from a cell
-    private fun extractCellValue(cell: org.apache.poi.ss.usermodel.Cell): Any? {
+    private fun extractCellValue(cell: Cell): Any? {
         return when {
-            cell.cellType == CellType.NUMERIC && org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell) -> cell.dateCellValue
+            cell.cellType == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell) -> cell.dateCellValue
             cell.cellType == CellType.NUMERIC -> cell.numericCellValue
             cell.cellType == CellType.STRING -> cell.stringCellValue.trim().takeIf { it.isNotEmpty() }
             cell.cellType == CellType.BOOLEAN -> cell.booleanCellValue

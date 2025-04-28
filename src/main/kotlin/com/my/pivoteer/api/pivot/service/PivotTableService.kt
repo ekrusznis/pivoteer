@@ -7,7 +7,6 @@ import com.my.pivoteer.api.uploads.model.FileUpload
 import com.my.pivoteer.api.uploads.repository.FileDataRepository
 import org.springframework.stereotype.Service
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Service
 class PivotTableService(private val pivotTableRepository: PivotTableRepository, private val fileDataRepository: FileDataRepository) {
@@ -25,12 +24,12 @@ class PivotTableService(private val pivotTableRepository: PivotTableRepository, 
     }
 
     fun fetchDocumentData(fileId: UUID, s: String): PivotTableResponse? {
-        val fileObject = fileDataRepository.findByFileId(fileId)
-        val pivotResponse: PivotTableResponse = PivotTableResponse(
+        fileDataRepository.findByFileId(fileId)
+
+        return PivotTableResponse(
             success = true,
             message = "Successfully fetched document",
             emptyList()
         )
-        return pivotResponse
     }
 }
