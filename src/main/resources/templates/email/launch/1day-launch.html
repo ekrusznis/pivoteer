@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tomorrow’s the Big Day!</title>
+</head>
+<body style="font-family: Arial, sans-serif; background: #1C1C2D; color: white; padding: 20px;">
+<th:block th:replace="email/common/header :: header"></th:block>
+
+<div style="padding: 20px;">
+<h1>Ready for Launch?</h1>
+<p>Hi <span th:text="${name}">User</span>,</p>
+
+<p>Only <b>one day left</b> before you get access to powerful pivot tables, visualizations, macros, and more with <b>MyPivoteer</b>!</p>
+
+<p>We can't wait for you to experience a better way to manage your spreadsheets.</p>
+
+<p>Stay tuned for our launch announcement tomorrow!</p>
+
+<br/>
+<p><b>The MyPivoteer Team</b></p>
+</div>
+
+<th:block th:replace="email/common/footer :: footer"></th:block>
+</body>
+</html>

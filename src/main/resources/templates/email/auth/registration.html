@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Welcome to MyPivoteer</title>
+</head>
+<body style="font-family: Arial, sans-serif; background: #1C1C2D; color: white; padding: 20px;">
+<th:block th:replace="email/common/header :: header"></th:block>
+
+<!-- Email Body -->
+<div style="padding: 20px;">
+<h1>Welcome to MyPivoteer!</h1>
+<p>Hi <span th:text="${name}">User</span>,</p>
+
+<p>Thank you for registering with us. You now have access to smarter spreadsheet management, effortless pivot tables, and beautiful visualizations.</p>
+
+<p>Visit your dashboard to get started:</p>
+
+<a href="https://mypivoteer.com" style="padding: 10px 20px; background: #9D76F9; color: white; text-decoration: none; border-radius: 5px;">Launch MyPivoteer</a>
+
+<br/><br/>
+<p>Happy Pivoting,</p>
+<p><b>The MyPivoteer Team</b></p>
+</div>
+
+<th:block th:replace="email/common/footer :: footer"></th:block>
+</body>
+</html>

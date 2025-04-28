@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>10 Days to Launch - Get Ready!</title>
+</head>
+<body style="font-family: Arial, sans-serif; background: #1C1C2D; color: white; padding: 20px;">
+
+<th:block th:replace="email/common/header :: header"></th:block>
+
+<div style="padding: 20px;">
+<h1>Only 10 Days Left!</h1>
+<p>Hi <span th:text="${name}">User</span>,</p>
+
+<p>The wait is almost over! In just <b>10 days</b>, you'll have access to smarter spreadsheets, powerful pivots, and easy file transformations with <b>MyPivoteer</b>.</p>
+
+<p>We're polishing up everything to make your experience amazing.</p>
+
+<p>Stay tuned. You're going to love what's coming!</p>
+
+<br/>
+<p><b>The MyPivoteer Team</b></p>
+</div>
+
+<th:block th:replace="email/common/footer :: footer"></th:block>
+
+</body>
+</html>
