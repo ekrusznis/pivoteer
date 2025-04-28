@@ -1,5 +1,6 @@
 package com.my.pivoteer.api.pivot.controller
 
+import com.my.pivoteer.api.pivot.model.PivotTableResponse
 import com.my.pivoteer.api.pivot.model.dto.PivotTableDto
 import com.my.pivoteer.api.pivot.service.PivotTableService
 import com.my.pivoteer.api.pivot.service.mapper.PivotTableMapper
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
@@ -32,6 +34,11 @@ class PivotTableController(
 
         val pivotTable = pivotTableService.createPivotTable(PivotTableMapper.toEntity(pivotTableDTO, user, file))
         return ApiResponse(true, "Pivot table created successfully", PivotTableMapper.toDTO(pivotTable))
+    }
+
+    @GetMapping
+    fun fetchPivotTableData(@PathVariable fileId: UUID): ApiResponse<PivotTableResponse> {
+        return ApiResponse(true, "Pivot table created successfully", pivotTableService.fetchDocumentData(fileId, "PIVOT"))
     }
 
     @GetMapping("/file/{fileId}")
