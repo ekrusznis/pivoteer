@@ -21,14 +21,14 @@ class MacroService(private val macroRepository: MacroRepository) {
 
         // 1. Detect columns with duplicates
         parsedData.columns.forEach { column ->
-            val values = parsedData.sampleRows.mapNotNull { it[column] }
+            val values = parsedData.rows.mapNotNull { it[column] }
             if (values.size != values.toSet().size) { // duplicates exist
                 options.add(
                     MacroOptionDto(
                         macroType = "Remove Duplicates",
                         description = "Removes duplicate rows based on the '$column' column.",
                         affectedColumns = listOf(column),
-                        exampleRows = parsedData.sampleRows.take(2)
+                        exampleRows = parsedData.rows.take(2)
                     )
                 )
             }
@@ -48,13 +48,13 @@ class MacroService(private val macroRepository: MacroRepository) {
 
         // 3. Detect missing data
         parsedData.columns.forEach { column ->
-            if (parsedData.sampleRows.any { it[column].isNullOrEmpty() }) {
+            if (parsedData.rows.any { it[column].isNullOrEmpty() }) {
                 options.add(
                     MacroOptionDto(
                         macroType = "Fill Missing Data",
                         description = "Allows you to fill missing values in '$column'.",
                         affectedColumns = listOf(column),
-                        exampleRows = parsedData.sampleRows.take(2)
+                        exampleRows = parsedData.rows.take(2)
                     )
                 )
             }
@@ -67,7 +67,7 @@ class MacroService(private val macroRepository: MacroRepository) {
                     macroType = "Sort by Date",
                     description = "Sorts rows based on the '$column' date values.",
                     affectedColumns = listOf(column),
-                    exampleRows = parsedData.sampleRows.take(2)
+                    exampleRows = parsedData.rows.take(2)
                 )
             )
         }
@@ -75,23 +75,23 @@ class MacroService(private val macroRepository: MacroRepository) {
         return options
     }
     private fun isNumericColumn(parsedData: ParsedFileData, column: String): Boolean {
-        return parsedData.sampleRows.count { it[column]?.toDoubleOrNull() != null } > parsedData.sampleRows.size / 2
+        return parsedData.rows.count { it[column]?.toDoubleOrNull() != null } > parsedData.rows.size / 2
     }
 
     private fun isDateColumn(parsedData: ParsedFileData, column: String): Boolean {
-        return parsedData.sampleRows.count {
+        return parsedData.rows.count {
             it[column]?.matches(Regex("\\d{4}-\\d{2}-\\d{2}")) == true
-        } > parsedData.sampleRows.size / 2
+        } > parsedData.rows.size / 2
     }
 
     private fun findOutliers(parsedData: ParsedFileData, column: String): List<Map<String, String>> {
-        val values = parsedData.sampleRows.mapNotNull { it[column]?.toDoubleOrNull() }
+        val values = parsedData.rows.mapNotNull { it[column]?.toDoubleOrNull() }
         if (values.isEmpty()) return emptyList()
 
         val min = values.minOrNull()!!
         val max = values.maxOrNull()!!
 
-        return parsedData.sampleRows.filter {
+        return parsedData.rows.filter {
             it[column]?.toDoubleOrNull() == min || it[column]?.toDoubleOrNull() == max
         }.take(2)
     }
