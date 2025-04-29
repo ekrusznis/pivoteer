@@ -40,7 +40,7 @@ services:
       context: .
       dockerfile: Docker/Dockerfile-frontend
     ports:
-      - ${FRONT_END_PORT}:${FRONTEND_PORT}
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
     restart: always
 
 volumes:

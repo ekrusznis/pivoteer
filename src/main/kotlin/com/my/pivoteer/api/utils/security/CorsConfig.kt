@@ -13,7 +13,7 @@ class CorsConfig {
     fun corsFilter(): CorsFilter {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
-        config.allowedOrigins = listOf("http://localhost:5175")  // ✅ Allow frontend
+        config.allowedOrigins = listOf("http://localhost:5173")
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("Authorization", "Content-Type")
         config.allowCredentials = true  // ✅ Required for cookies
