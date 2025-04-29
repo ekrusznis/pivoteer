@@ -74,10 +74,9 @@ jobs:
             docker compose down
             docker compose up --build -d
 
-      - name: Verify Env Variables
+      - name: Debug ENV variables (sanitized)
         run: |
-          echo "✅ FRONTEND_PORT: $FRONTEND_PORT"
-          echo "✅ BACKEND_PORT: $BACKEND_PORT"
+          printenv | grep PORT
         env:
           FRONTEND_PORT: ${{ secrets.FRONTEND_PORT }}
           BACKEND_PORT: ${{ secrets.BACKEND_PORT }}
