@@ -58,9 +58,8 @@ jobs:
           npm run build
 
       - name: Build Backend
-        working-directory: ./src
         run: |
-          ./gradlew clean build
+          ./gradlew clean build -p src
 
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v0.1.6
