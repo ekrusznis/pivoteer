@@ -204,14 +204,6 @@ const Dashboard = () => {
         </div>
 
         <div style={styles.tabContent}>
-          {activeTab === "Uploaded Files" && (
-          )}
-          {activeTab === "Pivot Tables" && (
-          )}
-          {activeTab === "Visualizations" && (
-          )}
-          {activeTab === "Macros" && (
-          )}
         </div>
       </section>
 
