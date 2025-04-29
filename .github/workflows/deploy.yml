@@ -51,6 +51,13 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
+      - name: ENV variables (sanitized)
+        run: |
+          printenv | grep PORT
+        env:
+          FRONTEND_PORT: ${{ secrets.FRONTEND_PORT }}
+          BACKEND_PORT: ${{ secrets.BACKEND_PORT }}
+
       - name: Build Frontend
         working-directory: ./pivoteer-frontend
         run: |
@@ -73,13 +80,6 @@ jobs:
             git pull origin main
             docker compose down
             docker compose up --build -d
-
-      - name: Debug ENV variables (sanitized)
-        run: |
-          printenv | grep PORT
-        env:
-          FRONTEND_PORT: ${{ secrets.FRONTEND_PORT }}
-          BACKEND_PORT: ${{ secrets.BACKEND_PORT }}
 
       - name: 🎉 Deployment Done!
         run: echo "🚀 Deployment successful!"
