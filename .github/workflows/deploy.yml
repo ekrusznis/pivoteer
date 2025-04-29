@@ -52,7 +52,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Frontend
-        working-directory: ./frontend
+        working-directory: ./pivoteer-frontend
         run: |
           npm install
           npm run build
@@ -60,7 +60,7 @@ jobs:
       - name: Build Backend
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build -p src
+          ./gradlew clean build
 
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v0.1.6
