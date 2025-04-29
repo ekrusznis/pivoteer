@@ -74,10 +74,10 @@ jobs:
             docker compose down
             docker compose up --build -d
 
-      - name: Verify Env Variables!
+      - name: Verify Env Variables
         run: |
-        echo "Frontend Port is: $FRONTEND_PORT"
-        echo "Backend Port is: $BACKEND_PORT"
+          echo "Frontend Port is: $FRONTEND_PORT"
+          echo "Backend Port is: $BACKEND_PORT"
 
       - name: 🎉 Deployment Done!
         run: echo "🚀 Deployment successful!"
