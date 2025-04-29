@@ -76,8 +76,11 @@ jobs:
 
       - name: Verify Env Variables
         run: |
-          echo "Frontend Port is: $FRONTEND_PORT"
-          echo "Backend Port is: $BACKEND_PORT"
+          echo "✅ FRONTEND_PORT: $FRONTEND_PORT"
+          echo "✅ BACKEND_PORT: $BACKEND_PORT"
+        env:
+          FRONTEND_PORT: ${{ secrets.FRONTEND_PORT }}
+          BACKEND_PORT: ${{ secrets.BACKEND_PORT }}
 
       - name: 🎉 Deployment Done!
         run: echo "🚀 Deployment successful!"
