@@ -3,8 +3,9 @@ name: Deploy MyPivoteer
 on:
   push:
     branches:
-      - main # production
+      - master # production
       - dev  # development
+      - gh_secrets_env_integration  # testing just to verify mapping works
 
 env:
   # Backend environment variables
