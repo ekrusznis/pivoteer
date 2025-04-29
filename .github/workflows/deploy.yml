@@ -59,6 +59,7 @@ jobs:
 
       - name: Build Backend
         run: |
+          chmod +x ./gradlew
           ./gradlew clean build -p src
 
       - name: Deploy to Server via SSH
