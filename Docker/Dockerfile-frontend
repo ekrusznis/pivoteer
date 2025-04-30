@@ -1,0 +1,20 @@
+# Dockerfile-frontend
+
+FROM node:20
+
+WORKDIR /app
+
+COPY pivoteer-frontend/package*.json ./
+RUN npm install
+
+COPY pivoteer-frontend .
+
+RUN npm run build
+
+# Install serve to run static files
+RUN npm install -g serve
+
+EXPOSE 3000
+
+# Serve the dist folder
+CMD ["serve", "-s", "dist", "-l", "3000"]

@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: pivoteer_db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile-backend
+    restart: always
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      STRIPE_SANDBOX_PUBLIC_KEY: ${STRIPE_SANDBOX_PUBLIC_KEY}
+      STRIPE_SANDBOX_SECRET_KEY: ${STRIPE_SANDBOX_SECRET_KEY}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile-frontend
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    restart: always
+
+volumes:
+  postgres_data:
