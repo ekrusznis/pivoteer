@@ -18,6 +18,7 @@ const HomePage = () => {
         <p>Transform Your Spreadsheets with Ease</p>
         <Button size="lg">Get started</Button>
       </div>
+        <hr className="my-16 border-t border-pink-500 opacity-20 w-3/4 mx-auto" />
 
       {/* Services */}
       <div className="grid grid-cols-3 gap-5 w-[70%] mt-10">
@@ -25,7 +26,7 @@ const HomePage = () => {
           <Service key={service.id} pivoteerService={service} />
         ))}
       </div>
-
+        <hr className="my-16 border-t border-pink-500 opacity-20 w-3/4 mx-auto" />
       {/* Features */}
       <Features />
 
