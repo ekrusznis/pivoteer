@@ -1,5 +1,6 @@
 import { CircleHelp } from "lucide-react";
 import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
 
 const Navigation = () => {
   return (
@@ -9,9 +10,12 @@ const Navigation = () => {
         <p className="text-2xl">My Pivoteer</p>
       </div>
       <div className="flex items-center gap-5">
-        <Button>
-          <CircleHelp /> Help
-        </Button>
+        <Link to="/help-center">
+          <Button>
+            <CircleHelp className="mr-2" />
+            Help
+          </Button>
+        </Link>
         <Button>Log in</Button>
       </div>
     </div>

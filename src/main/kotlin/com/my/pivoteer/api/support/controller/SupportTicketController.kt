@@ -1,6 +1,7 @@
 package com.my.pivoteer.api.support.controller
 
 import com.my.pivoteer.api.support.enum.SupportStatus
+import com.my.pivoteer.api.support.model.dto.CreateSupportTicketRequestDto
 import com.my.pivoteer.api.support.model.dto.SupportTicketDto
 import com.my.pivoteer.api.support.service.SupportTicketService
 import org.springframework.web.bind.annotation.*
@@ -13,14 +14,8 @@ class SupportTicketController(
 ) {
 
     @PostMapping
-    fun createTicket(@RequestBody request: CreateSupportTicketRequest): SupportTicketDto {
-        return supportTicketService.createTicket(
-            userId = request.userId,
-            logId = request.logId,
-            title = request.title,
-            message = request.message,
-            userEmail = request.userEmail
-        )
+    fun createTicket(@RequestBody request: CreateSupportTicketRequestDto): SupportTicketDto {
+        return supportTicketService.createTicket(request)
     }
 
     @GetMapping
@@ -38,11 +33,3 @@ class SupportTicketController(
         return supportTicketService.updateTicketStatus(ticketId, status)
     }
 }
-
-data class CreateSupportTicketRequest(
-    val userId: UUID,
-    val logId: UUID?,
-    val title: String,
-    val message: String,
-    val userEmail: String
-)

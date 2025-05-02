@@ -4,6 +4,7 @@ import com.my.pivoteer.api.email.model.EmailRequestDto
 import com.my.pivoteer.api.email.service.EmailService
 import com.my.pivoteer.api.support.enum.SupportStatus
 import com.my.pivoteer.api.support.model.SupportTicket
+import com.my.pivoteer.api.support.model.dto.CreateSupportTicketRequestDto
 import com.my.pivoteer.api.support.model.dto.SupportTicketDto
 import com.my.pivoteer.api.support.repository.SupportTicketRepository
 import com.my.pivoteer.api.support.service.mapper.SupportTicketMapper
@@ -17,12 +18,12 @@ class SupportTicketService(
     private val emailService: EmailService
 ) {
 
-    fun createTicket(userId: UUID, logId: UUID?, title: String, message: String, userEmail: String): SupportTicketDto {
+    fun createTicket(request: CreateSupportTicketRequestDto): SupportTicketDto {
         val ticket = SupportTicket(
-            userId = userId,
-            logId = logId,
-            title = title,
-            message = message
+            userId = request.userId,
+            logId = request.logId,
+            title = request.title,
+            message = request.message
         )
 
         val savedTicket = supportTicketRepository.save(ticket)
@@ -34,22 +35,22 @@ class SupportTicketService(
             templateName = "email/support_ticket", // Template for Support Team
             templateModel = mapOf(
                 "ticketId" to savedTicket.id.toString(),
-                "title" to title,
-                "message" to message
+                "title" to request.title,
+                "message" to request.message
             )
         )
         emailService.sendEmail(supportEmailRequest)
 
         // 🔵 2. Email to User (Acknowledgment)
         val userEmailRequest = EmailRequestDto(
-            to = userEmail,
+            to = request.userEmail,
             subject = "Your Support Ticket has been Received",
             templateName = "email/user_ticket_acknowledgement", // New template for Users
             templateModel = mapOf(
                 "ticketId" to savedTicket.id.toString(),
                 "userName" to "Customer", // (Optional, if you have a username you can pass it too)
-                "title" to title,
-                "message" to message
+                "title" to request.title,
+                "message" to request.message
             )
         )
         emailService.sendEmail(userEmailRequest)
