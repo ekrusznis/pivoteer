@@ -37,6 +37,8 @@ class FileActionService(
             setContentDispositionFormData("attachment", "export.$format")
         }
 
+        //if translation is subscribed to - val translatedText = openAiTranslationService.translateText(data, lang)
+
         return ResponseEntity(data, headers, HttpStatus.OK)
     }
 
