@@ -2,23 +2,23 @@ package com.my.pivoteer.api.uploads.controller
 
 import com.my.pivoteer.api.uploads.model.dto.FileResponseDto
 import com.my.pivoteer.api.uploads.model.dto.FileUploadDto
+import com.my.pivoteer.api.uploads.model.dto.ShareSettingsDto
+import com.my.pivoteer.api.uploads.service.FileActionService
 import com.my.pivoteer.api.uploads.service.FileUploadService
 import com.my.pivoteer.api.user.service.UserService
 import com.my.pivoteer.api.utils.response.ApiResponse
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
-import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 
 @RestController
 @RequestMapping("/api/files")
 class FileUploadController(
     private val fileUploadService: FileUploadService,
+    private val fileActionService: FileActionService,
     private val userService: UserService
 ) {
 
@@ -55,4 +55,21 @@ class FileUploadController(
         return ApiResponse(true, "File deleted successfully")
     }
 
+    @PostMapping("/export/{userId}")
+    fun exportFile(
+        @PathVariable userId: UUID,
+        @RequestParam fileId: UUID,
+        @RequestParam format: String
+    ): ResponseEntity<ByteArray> {
+        return fileActionService.exportFile(userId, fileId, format)
+    }
+
+    @PostMapping("/share/{userId}")
+    fun shareFile(
+        @PathVariable userId: UUID,
+        @RequestBody settings: ShareSettingsDto
+    ): ResponseEntity<ApiResponse<Map<String, Any>>> {
+        val result = fileActionService.shareFile(userId, settings)
+        return ResponseEntity.ok(result)
+    }
 }
