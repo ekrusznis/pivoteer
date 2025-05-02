@@ -40,6 +40,7 @@ const Pricing = () => {
       </div>
     ))}
   </div>
+      <hr className="my-16 border-t border-pink-500 opacity-20 w-3/4 mx-auto" />
 </div>
 
   );
