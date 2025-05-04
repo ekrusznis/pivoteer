@@ -7,6 +7,7 @@ export const pivoteerServices = [
     serviceTitle: "Pivot Tables",
     serviceDescription:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
+    serviceShortDescription: "Create custom pivot tables",
   },
 
   {
@@ -15,6 +16,7 @@ export const pivoteerServices = [
     serviceTitle: "Macros",
     serviceDescription:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
+    serviceShortDescription: "Automate repettitive tasks",
   },
 
   {
@@ -23,5 +25,6 @@ export const pivoteerServices = [
     serviceTitle: "Visualizations",
     serviceDescription:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ",
+    serviceShortDescription: "Build interactive charts",
   },
 ];

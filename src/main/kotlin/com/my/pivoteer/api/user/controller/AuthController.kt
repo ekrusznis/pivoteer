@@ -7,11 +7,15 @@ import com.my.pivoteer.api.user.service.AuthService
 import com.my.pivoteer.api.user.service.UserService
 import com.my.pivoteer.api.utils.response.ApiResponse
 import com.my.pivoteer.api.utils.token.JwtUtil
+import org.json.JSONException
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -62,5 +66,20 @@ class AuthController(
         response.addCookie(cookie)
 
         return ResponseEntity.ok(ApiResponse(true, "Login successful", AuthResponseDTO(token, user.id)))
+    }
+
+    @GetMapping("/status")
+    fun authStatus(@CookieValue("jwt", required = false) jwt: String?): ResponseEntity<Any> {
+        if (jwt == null || !jwtUtil.validateToken(jwt)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated")
+        }
+
+        val userId = jwtUtil.extractUserId(jwt)
+        val user = userId?.let { userService.findUserById(it) } ?: return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found")
+
+        return ResponseEntity.ok(mapOf(
+            "id" to user.id,
+            "email" to user.email
+        ))
     }
 }
