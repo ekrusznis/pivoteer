@@ -15,6 +15,9 @@ object UserMapper {
     // ✅ Convert `User` to `UserDto`
     fun toDTO(user: User) = UserDto(
         id = user.id,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        birthDate = user.birthDate,
         email = user.email,
         subscriptionId = user.subscriptionId,
         subscriptionStatus = user.subscriptionStatus,
@@ -26,6 +29,9 @@ object UserMapper {
     // ✅ Convert `UserDto` to `User`
     fun toEntity(dto: UserDto) = User(
         email = dto.email,
+        firstName = dto.firstName,
+        lastName = dto.lastName,
+        birthDate = dto.birthDate,
         password = "",
         subscriptionId = dto.subscriptionId,
         subscriptionStatus = dto.subscriptionStatus,

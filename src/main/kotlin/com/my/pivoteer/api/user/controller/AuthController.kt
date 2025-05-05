@@ -3,6 +3,7 @@ package com.my.pivoteer.api.user.controller
 import com.my.pivoteer.api.user.model.dto.AuthRequestDTO
 import com.my.pivoteer.api.user.model.dto.AuthResponseDTO
 import com.my.pivoteer.api.user.model.dto.UserDto
+import com.my.pivoteer.api.user.model.dto.UserRegisterDto
 import com.my.pivoteer.api.user.service.AuthService
 import com.my.pivoteer.api.user.service.UserService
 import com.my.pivoteer.api.utils.response.ApiResponse
@@ -23,8 +24,13 @@ class AuthController(
 ) {
 
     @PostMapping("/register")
-    fun register(@RequestBody request: AuthRequestDTO): ApiResponse<AuthResponseDTO> {
-        val userDTO = UserDto(email = request.email)
+    fun register(@RequestBody request: UserRegisterDto): ApiResponse<UserDto> {
+        val userDTO = UserDto(
+            email = request.email,
+            firstName = request.firstName,
+            lastName = request.lastName,
+            birthDate = request.birthDate
+        )
         val response = authService.register(userDTO, request.password)
         return ApiResponse(true, "User registered successfully", response)
     }

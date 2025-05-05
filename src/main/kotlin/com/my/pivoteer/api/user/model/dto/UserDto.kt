@@ -5,6 +5,9 @@ import java.util.*
 
 data class UserDto(
     val id: UUID? = null,
+    val firstName: String,
+    val lastName: String,
+    val birthDate: Date,
     val email: String,
     val subscriptionId: String? = null,
     val createdDate: Date? = null,
