@@ -1,6 +1,5 @@
 package com.my.pivoteer.api.uploads.model
 
-import com.my.pivoteer.api.user.model.User
 import java.util.*
 import javax.persistence.*
 

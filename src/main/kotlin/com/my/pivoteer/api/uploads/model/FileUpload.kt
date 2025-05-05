@@ -31,8 +31,8 @@ data class FileUpload(
     val fileSize: Long, // File size in bytes
 
     @Lob
-    @Column(nullable = false, columnDefinition = "LONGBLOB")
-    val fileData: ByteArray, // Store file as binary (Optional: Use external storage)
+    @Column(nullable = false)
+    val fileData: ByteArray,
 
     @Column(name = "uploaded_at", columnDefinition = "TIMESTAMP")
     val uploadedAt: Date = Date()

@@ -41,6 +41,8 @@ class SecurityConfig(
             .cors().and()
             .csrf().disable()
             .authorizeHttpRequests { auth ->
+                auth.requestMatchers(AntPathRequestMatcher("/"), AntPathRequestMatcher("/index.html")).permitAll()
+                auth.requestMatchers(AntPathRequestMatcher("/assets/**")).permitAll()
                 auth.requestMatchers(AntPathRequestMatcher("/api/auth/**")).permitAll()
                 auth.requestMatchers(AntPathRequestMatcher("/api/files/**")).authenticated()
                 auth.anyRequest().authenticated()
@@ -52,7 +54,6 @@ class SecurityConfig(
 
         return http.build()
     }
-
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()

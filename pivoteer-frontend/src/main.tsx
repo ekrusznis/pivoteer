@@ -4,6 +4,8 @@ import "./index.css";
 import { BrowserRouter, Route, Routes } from "react-router";
 import HomePage from "./pages/HomePage.tsx";
 import Layout from "./components/Layout/Layout.tsx";
+import TermsPage from "./components/custom_components/Terms/Terms.tsx";
+import PrivacyPage from "./components/custom_components/Privacy/Privacy.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -11,6 +13,8 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

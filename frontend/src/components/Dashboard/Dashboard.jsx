@@ -22,7 +22,6 @@ import {
 } from "../../api";
 import { useNavigate } from "react-router-dom";
 import AnalysisModal from "./Modals/AnalysisModal";
-import UploadedFilesTable from "./UploadedFiles/UploadedFilesTable";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -205,22 +204,6 @@ const Dashboard = () => {
         </div>
 
         <div style={styles.tabContent}>
-          {activeTab === "Uploaded Files" && (
-            <UploadedFilesTable
-              title="Uploaded Files"
-              items={uploadedFiles}
-              handleDelete={handleDelete}
-            />
-          )}
-          {activeTab === "Pivot Tables" && (
-            <UploadedFilesTable title="Pivot Tables" items={pivotTables} />
-          )}
-          {activeTab === "Visualizations" && (
-            <UploadedFilesTable title="Visualizations" items={visualizations} />
-          )}
-          {activeTab === "Macros" && (
-            <UploadedFilesTable title="Macros" items={macros} />
-          )}
         </div>
       </section>
 
