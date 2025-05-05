@@ -20,8 +20,11 @@ const Register = (): JSX.Element => {
   const onRegister = async (values: RegisterFormModel): Promise<void> => {
 
     const userData = {
+      firstName: values.firstName,
+      lastName: values.lastName,
       email: values.email,
-      password: values.password
+      password: values.password,
+      birthDate: values.birthDate
     };
 
     try {

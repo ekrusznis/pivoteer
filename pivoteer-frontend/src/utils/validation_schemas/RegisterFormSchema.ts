@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const registerFormSchema = z.object({
-  // firstName: z.string().nonempty("First name is required"),
-  // lastName: z.string().nonempty("Last name is required"),
+  firstName: z.string().nonempty("First name is required"),
+  lastName: z.string().nonempty("Last name is required"),
   email: z
     .string()
     .nonempty("Email is required") // Ensure it's not empty
@@ -20,14 +20,7 @@ export const registerFormSchema = z.object({
       "Password must contain at least one special character"
     ),
 
-  // birthDate: z.date({
-  //   required_error: "A date of birth is required.",
-  // }),
-
-  // contact: z
-  //   .string()
-  //   .nonempty("Contact is required")
-  //   .regex(/^[0-9]{9,15}$/, {
-  //     message: "Contact number must be in correct format.",
-  //   }),
+  birthDate: z.date({
+    required_error: "A date of birth is required.",
+  }),
 });

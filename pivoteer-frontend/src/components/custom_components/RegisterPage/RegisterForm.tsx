@@ -37,8 +37,11 @@ const RegisterForm = ({ onRegister, isLoading }: Props) => {
   const form = useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
       email: "",
-      password: ""
+      password: "",
+      birthDate: birthDate
     },
   });
 
