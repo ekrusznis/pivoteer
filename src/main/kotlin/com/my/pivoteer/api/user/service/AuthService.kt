@@ -15,16 +15,15 @@ import javax.servlet.http.HttpServletResponse
 class AuthService(private val userRepository: UserRepository, private val jwtUtil: JwtUtil) {
     private val passwordEncoder = BCryptPasswordEncoder()
 
-    fun register(userDTO: UserDto, password: String): AuthResponseDTO {
+    fun register(userDTO: UserDto, password: String): UserDto {
         if (userRepository.findByEmail(userDTO.email) != null) {
             throw IllegalArgumentException("Email already registered")
         }
 
         val user = UserMapper.toEntity(userDTO).copy(password = passwordEncoder.encode(password))
         val savedUser = userRepository.save(user)
-        val token = jwtUtil.generateToken(savedUser.id) // ✅ Generate token using `userId`
 
-        return AuthResponseDTO(token, savedUser.id) // ✅ Return `userId` instead of `email`
+        return UserMapper.toDTO(savedUser)
     }
 
     fun login(authRequest: AuthRequestDTO, response: HttpServletResponse): AuthResponseDTO {
