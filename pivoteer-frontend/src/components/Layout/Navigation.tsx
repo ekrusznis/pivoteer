@@ -9,9 +9,6 @@ const Navigation = () => {
         <p className="text-2xl">My Pivoteer</p>
       </div>
       <div className="flex items-center gap-5">
-        <Button>
-          <CircleHelp /> Help
-        </Button>
         <Button>Log in</Button>
       </div>
     </div>

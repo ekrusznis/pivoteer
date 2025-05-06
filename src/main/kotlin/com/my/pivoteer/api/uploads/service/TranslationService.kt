@@ -1,6 +1,5 @@
 package com.my.pivoteer.api.uploads.service
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -9,13 +8,13 @@ import org.springframework.web.client.RestTemplate
 
 @Service
 class TranslationService(
-    @Value("\${openai.api.key}") private val apiKey: String,
+//    @Value("\${openai.api.key}") private val apiKey: String,
     private val restTemplate: RestTemplate
 ) {
     fun translateText(text: String, targetLanguage: String): String {
         val headers = HttpHeaders().apply {
             contentType = MediaType.APPLICATION_JSON
-            setBearerAuth(apiKey)
+//            setBearerAuth(apiKey)
         }
 
         val body = mapOf(
