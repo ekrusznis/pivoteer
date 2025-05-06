@@ -56,7 +56,6 @@ class AuthServiceTests {
         }
         assertEquals("Email already registered", exception.message)
     }
-
     @Test
     fun `should login user with correct credentials`() {
         every { userRepository.findByEmail(testUser.email) } returns testUser
