@@ -15,11 +15,20 @@ data class User(
     @Id
     val id: UUID = UUID.randomUUID(),
 
+    @Column(nullable = false)
+    val firstName: String,
+
+    @Column(nullable = false)
+    val lastName: String,
+
     @Column(unique = true, nullable = false)
     val email: String,
 
     @Column(nullable = false)
     val password: String,
+
+    @Column(nullable = false)
+    val birthDate: Date,
 
     @Column(nullable = true)
     val subscriptionId: String? = null, // Stripe or PayPal subscription ID

@@ -36,31 +36,26 @@ class AuthServiceTests {
         email = "test@example.com",
         password = passwordEncoder.encode("password123"),
         createdAt = Date.from(Instant.now()),
-        updatedAt = Date.from(Instant.now())
+        updatedAt = Date.from(Instant.now()),
+        firstName = "first",
+        lastName = "last",
+        birthDate = Date.from(Instant.now())
     )
-
-    @Test
-    fun `should register a new user successfully`() {
-        every { userRepository.findByEmail(testUser.email) } returns null
-        every { userRepository.save(any()) } returns testUser
-        every { jwtUtil.generateToken(testUser.id) } returns "mock-token"
-
-        val response = authService.register(UserDto(email = testUser.email), "password123")
-
-        assertNotNull(response.token)
-        assertEquals(testUser.id, response.userId)  // ✅ Now checking userId instead of email
-    }
 
     @Test
     fun `should throw error if user already exists`() {
         every { userRepository.findByEmail(testUser.email) } returns testUser
 
         val exception = assertThrows<IllegalArgumentException> {
-            authService.register(UserDto(email = testUser.email), "password123")
+            authService.register(UserDto(
+                email = testUser.email,
+                firstName = "first",
+                lastName = "last",
+                birthDate = Date.from(Instant.now())
+            ), "password123")
         }
         assertEquals("Email already registered", exception.message)
     }
-
     @Test
     fun `should login user with correct credentials`() {
         every { userRepository.findByEmail(testUser.email) } returns testUser

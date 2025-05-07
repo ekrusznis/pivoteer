@@ -1,6 +1,7 @@
 package com.my.pivoteer.api.macro.controller
 
 import com.my.pivoteer.api.macro.model.dto.MacroDto
+import com.my.pivoteer.api.macro.model.dto.MacroOptionDto
 import com.my.pivoteer.api.macro.service.MacroService
 import com.my.pivoteer.api.macro.service.mapper.MacroMapper
 import com.my.pivoteer.api.uploads.service.FileUploadService
@@ -26,6 +27,21 @@ class MacroController(
 
         val macro = macroService.createMacro(MacroMapper.toEntity(macroDTO, user, file))
         return ApiResponse(true, "Macro created successfully", MacroMapper.toDTO(macro))
+    }
+
+    @GetMapping("/options/{userId}/{fileId}")
+    fun getMacroOptions(
+        @PathVariable userId: UUID,
+        @PathVariable fileId: UUID
+    ): ApiResponse<List<MacroOptionDto>> {
+        userService.findUserById(userId)
+            ?: return ApiResponse(false, "User not found")
+
+        val file = fileUploadService.getFileById(fileId)
+            ?: return ApiResponse(false, "File not found")
+
+        val macroOptions = macroService.generateMacroOptions(file)
+        return ApiResponse(true, "Macro options fetched", macroOptions)
     }
 
     @GetMapping("/file/{fileId}")
