@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Enterprise Inquiry Submission</title>
+</head>
+<body style="font-family: Arial, sans-serif; background: #1C1C2D; color: white; padding: 20px;">
+
+<div style="padding: 20px;">
+    <h1>🚀 New Enterprise Inquiry</h1>
+    <p><b>Submitted by:</b> <span th:text="${form.contactName}">Name</span> | <span th:text="${form.email}">email@example.com</span></p>
+
+    <h3>📄 Submission Details:</h3>
+    <ul style="line-height: 1.8;">
+        <li><b>Company:</b> <span th:text="${form.companyName}">Acme Corp</span></li>
+        <li><b>Industry:</b> <span th:text="${form.industry}">Healthcare</span></li>
+        <li><b>Website:</b> <span th:text="${form.website}">www.acme.com</span></li>
+        <li><b>User Range:</b> <span th:text="${form.users}">11–50</span></li>
+        <li><b>Login Access Type:</b> <span th:text="${form.loginType}">Individual</span></li>
+        <li><b>Interested Add-ons:</b> <span th:text="${form.addons}">HIPAA, File History</span></li>
+        <li><b>Add-on User Count:</b> <span th:text="${form.addonUserCount}">25</span></li>
+        <li><b>Storage Needs:</b> <span th:text="${form.storage}">100GB–1TB</span></li>
+        <li><b>Automation:</b> <span th:text="${form.automation}">Yes</span></li>
+        <li><b>SLA:</b> <span th:text="${form.sla}">Yes</span></li>
+        <li><b>Onboarding:</b> <span th:text="${form.onboarding}">Yes</span></li>
+        <li><b>Billing Preference:</b> <span th:text="${form.billing}">Annually</span></li>
+    </ul>
+
+    <h4>📝 Additional Notes:</h4>
+    <p th:text="${form.notes}">Looking for SSO integration and audit logs.</p>
+
+    <br />
+    <p>– <b>The MyPivoteer System</b></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thank You for Your Enterprise Inquiry</title>
+</head>
+<body style="font-family: Arial, sans-serif; background: #1C1C2D; color: white; padding: 20px;">
+
+<div style="padding: 20px;">
+    <h1>Thank You for Reaching Out!</h1>
+
+    <p>Hi <span th:text="${form.contactName}">Customer</span>,</p>
+
+    <p>Thanks for submitting your Enterprise inquiry. Our team has received your details and will follow up with a custom quote within 24 hours.</p>
+
+    <p><b>Here is a summary of what you sent:</b></p>
+
+    <ul style="line-height: 1.8;">
+        <li><b>Company:</b> <span th:text="${form.companyName}">Acme Corp</span></li>
+        <li><b>Industry:</b> <span th:text="${form.industry}">Healthcare</span></li>
+        <li><b>Website:</b> <span th:text="${form.website}">www.acme.com</span></li>
+        <li><b>User Range:</b> <span th:text="${form.users}">11–50</span></li>
+        <li><b>Login Type:</b> <span th:text="${form.loginType}">Individual</span></li>
+        <li><b>Selected Add-ons:</b> <span th:text="${form.addons}">HIPAA, File History</span></li>
+        <li><b>Storage Needs:</b> <span th:text="${form.storage}">100GB–1TB</span></li>
+        <li><b>SLA/Support:</b> <span th:text="${form.sla}">Yes</span></li>
+    </ul>
+
+    <p>If any information needs to be updated, feel free to reply directly to this message.</p>
+
+    <br />
+    <p>Thanks again!<br /><b>The MyPivoteer Team</b></p>
+</div>
+
+</body>
+</html>
