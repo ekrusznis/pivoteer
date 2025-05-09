@@ -8,6 +8,7 @@ import com.my.pivoteer.api.support.model.dto.CreateSupportTicketRequestDto
 import com.my.pivoteer.api.support.model.dto.SupportTicketDto
 import com.my.pivoteer.api.support.repository.SupportTicketRepository
 import com.my.pivoteer.api.support.service.mapper.SupportTicketMapper
+import com.my.pivoteer.api.user.service.UserService
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
@@ -15,10 +16,13 @@ import java.util.*
 @Service
 class SupportTicketService(
     private val supportTicketRepository: SupportTicketRepository,
+    private val userService: UserService,
     private val emailService: EmailService
 ) {
 
     fun createTicket(request: CreateSupportTicketRequestDto): SupportTicketDto {
+        if (userService.findUserById(request.userId) == null) throw Exception("UserId not found")
+
         val ticket = SupportTicket(
             userId = request.userId,
             logId = request.logId,

@@ -1,28 +1,44 @@
-import { useState } from "react";
-
-const dummyTickets = [
-  { id: 1021, title: "Cannot generate pivot table", updated: "2 hours ago", status: "Open" },
-  { id: 1020, title: "Issue with file upload", updated: "2 days ago", status: "In Progress" },
-  { id: 1019, title: "Error exdata lucc bcoes", updated: "2 hours ago", status: "Closed" },
-  { id: 1018, title: "Issue with file errors", updated: "21 hours ago", status: "Open" },
-  { id: 1017, title: "Check update simar erro", updated: "3 days ago", status: "Closed" },
-];
+import { useEffect, useState } from "react";
+import { getTicketsByUser, createTicket } from "@/api/api";
 
 const statusColorMap = {
   Open: "bg-neonPink",
   "In Progress": "bg-indigo-400",
   Closed: "bg-emerald-600",
 };
+type SupportTicket = {
+  id: string;
+  createdAt: string;
+  lastUpdated?: string;
+  userId: string;
+  logId?: string;
+  title: string;
+  message: string;
+  status: "Open" | "In Progress" | "Closed";
+};
 
 const Support = () => {
+  const userId = "replace-with-real-user-id"; // Replace with real userId from context/session
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = () => {
-    // Replace with actual form logic
-    console.log("Submitted:", { title, message });
-    setTitle("");
-    setMessage("");
+  useEffect(() => {
+    if (!userId) return;
+    getTicketsByUser(userId)
+      .then(setTickets)
+      .catch(console.error);
+  }, [userId]);
+
+  const handleSubmit = async () => {
+    try {
+      const newTicket = await createTicket({ userId, title, message });
+      setTickets([newTicket, ...tickets]);
+      setTitle("");
+      setMessage("");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -63,15 +79,15 @@ const Support = () => {
             </tr>
           </thead>
           <tbody>
-            {dummyTickets.map((ticket) => (
+            {tickets.map((ticket) => (
               <tr key={ticket.id} className="border-b border-gray-800 hover:bg-indigo-900/40">
-                <td className="py-2">#{ticket.id}</td>
+                <td className="py-2">#{ticket.id.slice(0, 8)}</td>
                 <td>{ticket.title}</td>
-                <td>{ticket.updated}</td>
+                <td>{new Date(ticket.lastUpdated || ticket.createdAt).toLocaleString()}</td>
                 <td>
                   <span
                     className={`text-xs text-white px-3 py-1 rounded-full ${
-                      statusColorMap[ticket.status as keyof typeof statusColorMap]
+                      statusColorMap[ticket.status] || "bg-gray-500"
                     }`}
                   >
                     {ticket.status}
